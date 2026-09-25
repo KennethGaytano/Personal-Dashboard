@@ -30,6 +30,14 @@ function assert(condition, message) {
   }
 }
 
+async function getExpectedTime(page, timeString) {
+  return page.evaluate((value) => {
+    const [hours, minutes] = value.split(':').map(Number);
+    const date = new Date(2000, 0, 1, hours, minutes);
+    return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }, timeString);
+}
+
 async function runTests() {
   console.log('=== Task Tab Automated Test Suite ===\n');
 
@@ -91,12 +99,17 @@ async function runTests() {
     assert(!submitResult || JSON.parse(submitResult).length === 0, 'Empty title does not create a task');
 
     // -------------------------------------------------------------
-    // Test 3: Add Task (To Do, High Priority, Description, Due Date)
+    // Test 3: Add Task (To Do, High Priority, Description, Due Date and Time)
     // -------------------------------------------------------------
     console.log('\n--- Test Group 3: Add Task Functionality ---');
     await page.fill('#taskTitle', 'Finish Q4 report');
     await page.fill('#taskDescription', 'Compile financial figures and executive summary');
+
+    const dueTimeInput = page.locator('#taskDueTime');
+    assert(await dueTimeInput.isDisabled(), 'Due time is disabled until a due date is selected');
     await page.fill('#taskDueDate', '2026-10-15');
+    assert(!(await dueTimeInput.isDisabled()), 'Due time is enabled when a due date is selected');
+    await dueTimeInput.fill('14:30');
     await page.selectOption('#taskStatus', 'todo');
     await page.selectOption('#taskPriority', 'high');
     await page.click('#submitBtn');
@@ -115,12 +128,23 @@ async function runTests() {
     const taskDue = await page.locator('#todoList .task-item .task-due-date').textContent();
     assert(taskDue.includes('Oct 15, 2026'), `Task due date formatted correctly ("${taskDue}")`);
 
+    const taskTime = await page.locator('#todoList .task-item .task-due-time').textContent();
+    const expectedTaskTime = await getExpectedTime(page, '14:30');
+    assert(taskTime === expectedTaskTime, `Task due time formatted correctly ("${taskTime}")`);
+
+    const storedTask = await page.evaluate(() => {
+      return JSON.parse(localStorage.getItem('dashboard_tasks')).find(task => task.title === 'Finish Q4 report');
+    });
+    assert(storedTask.dueDate === '2026-10-15', 'Task due date saved to localStorage');
+    assert(storedTask.dueTime === '14:30', 'Task due time saved to localStorage');
+
     // -------------------------------------------------------------
     // Test 4: Add In Progress & Completed Tasks
     // -------------------------------------------------------------
     console.log('\n--- Test Group 4: Add Multiple Tasks with Different Statuses ---');
-    // Add In Progress task
+    // Add In Progress task with a date but no time
     await page.fill('#taskTitle', 'Write Unit Tests');
+    await page.fill('#taskDueDate', '2026-10-20');
     await page.selectOption('#taskStatus', 'in_progress');
     await page.selectOption('#taskPriority', 'medium');
     await page.click('#submitBtn');
@@ -128,6 +152,9 @@ async function runTests() {
     await page.waitForSelector('#inProgressList .task-item');
     const inProgressCount = await page.locator('#inProgressList .task-item').count();
     assert(inProgressCount === 1, 'In Progress list has 1 task');
+    const dateOnlyDue = await page.locator('#inProgressList .task-item .task-due-date').textContent();
+    assert(dateOnlyDue.includes('Oct 20, 2026'), 'Date-only tasks still display their due date');
+    assert(await page.locator('#inProgressList .task-item .task-due-time').count() === 0, 'Date-only tasks do not display a due time');
 
     // Add Completed task
     await page.fill('#taskTitle', 'Setup Dev Environment');
@@ -169,12 +196,17 @@ async function runTests() {
     // Verify form is populated
     const editTitleValue = await page.locator('#taskTitle').inputValue();
     assert(editTitleValue.length > 0, `Form populated with title: "${editTitleValue}"`);
+    const editDueDateValue = await page.locator('#taskDueDate').inputValue();
+    const editDueTimeValue = await page.locator('#taskDueTime').inputValue();
+    assert(editDueDateValue === '2026-10-15', `Form populated with due date: "${editDueDateValue}"`);
+    assert(editDueTimeValue === '14:30', `Form populated with due time: "${editDueTimeValue}"`);
 
     const submitBtnText = await page.locator('#submitBtn').textContent();
     assert(submitBtnText.includes('Update'), 'Submit button changes to "Update Task"');
 
-    // Change title and status
+    // Change title, priority, and due time
     await page.fill('#taskTitle', 'Finish Q4 report (REVISED)');
+    await page.locator('#taskDueTime').fill('16:45');
     await page.selectOption('#taskPriority', 'low');
     await page.click('#submitBtn');
 
@@ -184,6 +216,14 @@ async function runTests() {
 
     const updatedPriority = await page.locator('#todoList .task-item .task-priority').textContent();
     assert(updatedPriority === 'low', 'Task priority updated to "low"');
+
+    const updatedTime = await page.locator('#todoList .task-item .task-due-time').textContent();
+    const expectedUpdatedTime = await getExpectedTime(page, '16:45');
+    assert(updatedTime === expectedUpdatedTime, `Task due time updated to "${updatedTime}"`);
+    const storedEditedTask = await page.evaluate(() => {
+      return JSON.parse(localStorage.getItem('dashboard_tasks')).find(task => task.title === 'Finish Q4 report (REVISED)');
+    });
+    assert(storedEditedTask.dueTime === '16:45', 'Updated due time saved to localStorage');
 
     // -------------------------------------------------------------
     // Test 7: Cancel Edit
@@ -196,6 +236,8 @@ async function runTests() {
     const resetBtnText = await page.locator('#submitBtn').textContent();
     assert(resetBtnText.includes('Add Task'), 'Form reset to Add mode after cancel');
     assert(!(await page.locator('#cancelBtn').isVisible()), 'Cancel button is hidden after cancel');
+    assert(await page.locator('#taskDueTime').isDisabled(), 'Due time is disabled after resetting an empty due date');
+    assert(await page.locator('#taskDueTime').inputValue() === '', 'Due time is cleared after cancelling an edit');
 
     // -------------------------------------------------------------
     // Test 8: Deletion Confirmation & Deletion
@@ -238,6 +280,10 @@ async function runTests() {
 
     const persistedTodo = await page.locator('#todoList .task-item .task-text').textContent();
     assert(persistedTodo === 'Finish Q4 report (REVISED)', `Persisted task loaded after reload: "${persistedTodo}"`);
+
+    const persistedDueTime = await page.locator('#todoList .task-item .task-due-time').textContent();
+    const expectedPersistedTime = await getExpectedTime(page, '16:45');
+    assert(persistedDueTime === expectedPersistedTime, `Persisted due time loaded after reload: "${persistedDueTime}"`);
 
     const persistedCompleted = await page.locator('#completedList .task-item .task-text').textContent();
     assert(persistedCompleted === 'Setup Dev Environment', `Persisted completed task loaded: "${persistedCompleted}"`);

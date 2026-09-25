@@ -75,6 +75,11 @@ async function runSmokeTest() {
     await page.fill('#taskDescription', 'Create and test interactive dashboard skills');
     console.log('   Typed task description');
 
+    // Set due date and time
+    await page.fill('#taskDueDate', '2026-10-15');
+    await page.fill('#taskDueTime', '14:30');
+    console.log('   Set task due date and time');
+
     // Select priority
     await page.selectOption('#taskPriority', 'high');
     console.log('   Selected high priority');
@@ -82,6 +87,10 @@ async function runSmokeTest() {
     // Click Add button
     await page.click('#submitBtn');
     console.log('   Clicked Add Task button');
+
+    const createdTask = page.locator('#todoList .task-item').filter({ hasText: 'Complete skill generator' });
+    await createdTask.locator('.task-due-time').waitFor();
+    console.log('   Verified task due time was rendered');
 
     // Now check the newly created checkbox
     await page.waitForSelector('#todoList .task-item input[type="checkbox"]');

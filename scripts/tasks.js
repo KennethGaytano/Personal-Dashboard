@@ -72,6 +72,7 @@ function createTask(taskData) {
     title: sanitizeInput(taskData.title.trim()),
     description: taskData.description ? sanitizeInput(taskData.description.trim()) : '',
     dueDate: taskData.dueDate || '',
+    dueTime: taskData.dueDate && taskData.dueTime ? taskData.dueTime : '',
     status: taskData.status || TaskStatus.TODO,
     priority: taskData.priority || TaskPriority.MEDIUM,
     createdAt: new Date().toISOString(),
@@ -235,7 +236,7 @@ function renderTaskSection(containerId, tasks, emptyMessage) {
           </div>
         </div>
         ${task.description ? `<p class="task-description">${task.description}</p>` : ''}
-        ${task.dueDate ? `<p class="task-due-date">Due: ${formatDate(task.dueDate)}</p>` : ''}
+        ${formatDueDateTime(task) ? `<p class="task-due-date">${formatDueDateTime(task)}</p>` : ''}
       </div>
     </div>
   `).join('');
@@ -267,6 +268,45 @@ function formatDate(dateString) {
 }
 
 /**
+ * Format a task's due date and optional time for display
+ */
+function formatDueDateTime(task) {
+  if (!task.dueDate) return '';
+
+  const formattedTime = formatTime(task.dueTime);
+  return `Due: ${formatDate(task.dueDate)}${formattedTime ? ` at <span class="task-due-time">${formattedTime}</span>` : ''}`;
+}
+
+/**
+ * Format an HTML time value in the visitor's local time format
+ */
+function formatTime(timeString) {
+  if (!timeString) return '';
+
+  const match = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(timeString);
+  if (!match) return '';
+
+  const date = new Date();
+  date.setHours(Number(match[1]), Number(match[2]), 0, 0);
+  return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
+
+/**
+ * Enable the due time only when the task has a due date
+ */
+function syncDueTimeAvailability() {
+  const dueDateInput = document.getElementById('taskDueDate');
+  const dueTimeInput = document.getElementById('taskDueTime');
+
+  if (!dueDateInput || !dueTimeInput) return;
+
+  dueTimeInput.disabled = !dueDateInput.value;
+  if (!dueDateInput.value) {
+    dueTimeInput.value = '';
+  }
+}
+
+/**
  * Handle form submission
  */
 function handleFormSubmit(event) {
@@ -277,6 +317,7 @@ function handleFormSubmit(event) {
     title: form.title.value,
     description: form.description.value,
     dueDate: form.dueDate.value,
+    dueTime: form.dueDate.value ? form.dueTime.value : '',
     status: form.status.value,
     priority: form.priority.value
   };
@@ -295,6 +336,7 @@ function handleFormSubmit(event) {
 
   if (success) {
     form.reset();
+    syncDueTimeAvailability();
     renderTasks();
   }
 }
@@ -317,8 +359,10 @@ function startEditTask(taskId) {
   document.getElementById('taskTitle').value = task.title;
   document.getElementById('taskDescription').value = task.description || '';
   document.getElementById('taskDueDate').value = task.dueDate || '';
+  document.getElementById('taskDueTime').value = task.dueTime || '';
   document.getElementById('taskStatus').value = task.status;
   document.getElementById('taskPriority').value = task.priority;
+  syncDueTimeAvailability();
 
   // Update form UI
   document.getElementById('formTitle').textContent = 'Edit Task';
@@ -342,6 +386,7 @@ function cancelEdit() {
 
   // Reset form
   document.getElementById('taskForm').reset();
+  syncDueTimeAvailability();
   document.getElementById('formTitle').textContent = 'Add a Task';
   document.getElementById('submitBtn').textContent = '+ Add Task';
 
@@ -445,6 +490,13 @@ function initTaskManager() {
   const form = document.getElementById('taskForm');
   if (form) {
     form.addEventListener('submit', handleFormSubmit);
+
+    const dueDateInput = document.getElementById('taskDueDate');
+    if (dueDateInput) {
+      dueDateInput.addEventListener('input', syncDueTimeAvailability);
+      dueDateInput.addEventListener('change', syncDueTimeAvailability);
+      syncDueTimeAvailability();
+    }
   }
 
   // Set up cancel button
