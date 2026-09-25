@@ -8,36 +8,45 @@
 </head>
 <body>
 
-    <aside>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sidebar" aria-label="Open navigation menu">
+        <span class="icon-open" aria-hidden="true">☰</span>
+        <span class="icon-close" aria-hidden="true">✕</span>
+    </button>
+
+    <button type="button" class="nav-scrim" tabindex="-1" aria-hidden="true"></button>
+
+    <aside id="sidebar">
         <div class="sidebar-logo">
-            <h2>📊 Dashboard</h2>
+            <h2><span aria-hidden="true">📊</span> Dashboard</h2>
         </div>
-        <nav class="sidebar-nav">
-            <a href="index.html" class="active">
-                <span class="nav-icon">🏠</span> Home
+        <nav class="sidebar-nav" aria-label="Main">
+            <a href="index.html" class="active" aria-current="page">
+                <span class="nav-icon" aria-hidden="true">🏠</span> Home
             </a>
             <a href="pages/tasks.html">
-                <span class="nav-icon">✅</span> Tasks
+                <span class="nav-icon" aria-hidden="true">✅</span> Tasks
             </a>
             <a href="pages/calendar.html">
-                <span class="nav-icon">📅</span> Calendar
+                <span class="nav-icon" aria-hidden="true">📅</span> Calendar
             </a>
             <a href="pages/notes.html">
-                <span class="nav-icon">📝</span> Notes
+                <span class="nav-icon" aria-hidden="true">📝</span> Notes
             </a>
             <a href="pages/progress.html">
-                <span class="nav-icon">📈</span> Progress
+                <span class="nav-icon" aria-hidden="true">📈</span> Progress
             </a>
             <a href="pages/goals.html">
-                <span class="nav-icon">🎯</span> Goals
+                <span class="nav-icon" aria-hidden="true">🎯</span> Goals
             </a>
         </nav>
     </aside>
 
-    <main>
+    <main id="main-content">
 
         <header>
-            <h1>Good morning! ☀️</h1>
+            <h1 id="greeting">Welcome back! <span aria-hidden="true">👋</span></h1>
             <p>Welcome to your personal dashboard.</p>
         </header>
 
@@ -45,22 +54,22 @@
             <h2>Overview</h2>
             <div class="stats-grid">
                 <a href="pages/tasks.html" class="stat-card">
-                    <div class="stat-icon">✅</div>
+                    <div class="stat-icon" aria-hidden="true">✅</div>
                     <h3>Tasks</h3>
                     <p class="stat-value">0/5</p>
                 </a>
                 <a href="pages/progress.html" class="stat-card">
-                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-icon" aria-hidden="true">⏱️</div>
                     <h3>Study Time</h3>
                     <p class="stat-value">0h 00m</p>
                 </a>
                 <a href="pages/progress.html" class="stat-card">
-                    <div class="stat-icon">📁</div>
+                    <div class="stat-icon" aria-hidden="true">📁</div>
                     <h3>Projects</h3>
                     <p class="stat-value">3</p>
                 </a>
                 <a href="pages/progress.html" class="stat-card">
-                    <div class="stat-icon">🔥</div>
+                    <div class="stat-icon" aria-hidden="true">🔥</div>
                     <h3>Streak</h3>
                     <p class="stat-value">7 days</p>
                 </a>
@@ -101,19 +110,19 @@
             </div>
             <div class="notes-grid">
                 <a href="pages/notes.html" class="note-card">
-                    <div class="note-color-bar" style="background: var(--accent);"></div>
+                    <div class="note-color-bar note-color-accent" aria-hidden="true"></div>
                     <h3>Meeting Notes</h3>
                     <p>Discuss project timeline and allocate resources for Q4 deliverables.</p>
                     <div class="note-date">Today</div>
                 </a>
                 <a href="pages/notes.html" class="note-card">
-                    <div class="note-color-bar" style="background: var(--success);"></div>
+                    <div class="note-color-bar note-color-success" aria-hidden="true"></div>
                     <h3>Book Recommendations</h3>
                     <p>Clean Code, The Pragmatic Programmer, Designing Data-Intensive Applications.</p>
                     <div class="note-date">Yesterday</div>
                 </a>
                 <a href="pages/notes.html" class="note-card">
-                    <div class="note-color-bar" style="background: var(--warning);"></div>
+                    <div class="note-color-bar note-color-warning" aria-hidden="true"></div>
                     <h3>Ideas</h3>
                     <p>Build a habit tracker, automate weekly reports, learn Rust basics.</p>
                     <div class="note-date">Sep 20</div>
@@ -123,6 +132,7 @@
 
     </main>
 
+    <script src="scripts/nav.js"></script>
     <script src="scripts/home.js"></script>
 </body>
 </html>

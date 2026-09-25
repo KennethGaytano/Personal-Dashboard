@@ -12,25 +12,30 @@
     --bg-secondary: #1a1d2e;
     --bg-card: #232741;
     --bg-card-hover: #2c3154;
-    --accent: #7c5cfc;
+    --accent: #6a4ce0;
+    --accent-hover: #5a3ec9;
     --accent-glow: rgba(124, 92, 252, 0.25);
     --accent-light: #a78bfa;
     --text-primary: #e2e8f0;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
+    --text-secondary: #a8b5c9;
+    /* Chosen for headroom: 5.47:1 on --bg-card, the worst surface it sits on */
+    --text-muted: #8ea0b8;
     --border: #2e3348;
+    --border-strong: #4c5470;
     --success: #34d399;
     --warning: #fbbf24;
     --danger: #f87171;
+    /* Lightened text variants for use on tinted badge backgrounds */
+    --danger-text: #fca5a5;
     --radius: 12px;
     --radius-sm: 8px;
     --transition: 0.2s ease;
     --sidebar-width: 240px;
+    --focus-ring: 0 0 0 3px var(--accent-glow);
 }
 
 html {
     font-size: 16px;
-    scroll-behavior: smooth;
 }
 
 body {
@@ -40,6 +45,9 @@ body {
     display: flex;
     min-height: 100vh;
     line-height: 1.6;
+    /* The sidebar is fixed and out of flow, so pad the body by its width.
+       That lets main centre itself in the remaining space (see main). */
+    padding-left: var(--sidebar-width);
 }
 
 a {
@@ -73,7 +81,7 @@ input, textarea, select {
 
 select {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a8b5c9' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     padding-right: 2.5rem;
@@ -82,7 +90,54 @@ select {
 
 input:focus, textarea:focus, select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow);
+    box-shadow: var(--focus-ring);
+}
+
+/* ===== Focus Visibility ===== */
+:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Remove the ring only where a custom, higher-contrast replacement is applied */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: var(--focus-ring);
+}
+
+/* ===== Accessibility Utilities ===== */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 0.5rem;
+    z-index: 3000;
+    padding: 0.6rem 1rem;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    transition: top var(--transition);
+}
+
+.skip-link:focus {
+    top: 0.5rem;
 }
 
 /* ===== Sidebar ===== */
@@ -97,7 +152,7 @@ aside {
     display: flex;
     flex-direction: column;
     padding: 1.5rem 0;
-    z-index: 100;
+    z-index: 300;
     overflow-y: auto;
 }
 
@@ -130,7 +185,7 @@ aside {
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--text-secondary);
-    transition: all var(--transition);
+    transition: background-color var(--transition), color var(--transition);
 }
 
 .sidebar-nav a:hover {
@@ -138,6 +193,7 @@ aside {
     color: var(--text-primary);
 }
 
+/* Active page is signalled by background, weight AND aria-current (set in HTML) */
 .sidebar-nav a.active {
     background: var(--accent-glow);
     color: var(--accent-light);
@@ -151,10 +207,64 @@ aside {
     flex-shrink: 0;
 }
 
+/* ===== Mobile Navigation Toggle ===== */
+.nav-toggle {
+    display: none;
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 350;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--text-primary);
+    transition: left var(--transition), background-color var(--transition);
+}
+
+.nav-toggle:hover {
+    background: var(--bg-card-hover);
+}
+
+.nav-toggle .icon-close {
+    display: none;
+}
+
+body.nav-open .nav-toggle {
+    left: calc(var(--sidebar-width) + 0.75rem);
+}
+
+body.nav-open .nav-toggle .icon-open {
+    display: none;
+}
+
+body.nav-open .nav-toggle .icon-close {
+    display: inline;
+}
+
+.nav-scrim {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 250;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    cursor: pointer;
+}
+
 /* ===== Main Content ===== */
 main {
-    margin-left: var(--sidebar-width);
+    /* Auto inline margins centre the column once flex-grow hits max-width */
+    margin-inline: auto;
     flex: 1;
+    /* A flex item defaults to min-width:auto, which refuses to shrink below its
+       content and pushes the page wide. The calendar's 1fr tracks need this. */
+    min-width: 0;
     padding: 2rem 2.5rem;
     max-width: 1200px;
 }
@@ -189,7 +299,9 @@ section > h2 {
 
 .section-header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     gap: 0.5rem;
     margin-bottom: 1rem;
 }
@@ -215,7 +327,7 @@ section > h2 {
 }
 
 .section-link:hover {
-    color: var(--accent);
+    color: var(--accent-light);
     text-decoration: underline;
 }
 
@@ -235,10 +347,12 @@ section > h2 {
     transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
-.stat-card:hover {
+/* Only cards that are real links advertise themselves as clickable */
+a.stat-card:hover,
+button.stat-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    border-color: var(--accent-glow);
+    border-color: var(--border-strong);
 }
 
 .stat-card .stat-icon {
@@ -283,22 +397,23 @@ section > h2 {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    transition: background var(--transition);
+    transition: background-color var(--transition);
 }
 
 .task-item:hover {
     background: var(--bg-card-hover);
 }
 
+/* 24x24 meets the WCAG 2.2 target-size minimum */
 .task-item input[type="checkbox"] {
     appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--border);
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border-strong);
     border-radius: 6px;
     flex-shrink: 0;
     cursor: pointer;
-    transition: all var(--transition);
+    transition: background-color var(--transition), border-color var(--transition);
     position: relative;
 }
 
@@ -314,7 +429,7 @@ section > h2 {
     left: 50%;
     transform: translate(-50%, -50%);
     color: #fff;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     font-weight: 700;
 }
 
@@ -339,7 +454,7 @@ section > h2 {
 
 .priority-high {
     background: rgba(248, 113, 113, 0.15);
-    color: var(--danger);
+    color: var(--danger-text);
 }
 
 .priority-medium {
@@ -393,11 +508,13 @@ section > h2 {
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
+    min-height: 44px;
     padding: 0.6rem 1.25rem;
     font-size: 0.85rem;
     font-weight: 600;
     border-radius: var(--radius-sm);
-    transition: all var(--transition);
+    transition: background-color var(--transition), color var(--transition),
+        border-color var(--transition), box-shadow var(--transition);
 }
 
 .btn-primary {
@@ -406,7 +523,7 @@ section > h2 {
 }
 
 .btn-primary:hover {
-    background: #6a4ce0;
+    background: var(--accent-hover);
     box-shadow: 0 4px 12px var(--accent-glow);
 }
 
@@ -423,7 +540,7 @@ section > h2 {
 
 .btn-danger {
     background: rgba(248, 113, 113, 0.15);
-    color: var(--danger);
+    color: var(--danger-text);
 }
 
 .btn-danger:hover {
@@ -438,7 +555,9 @@ section > h2 {
 /* ===== Calendar ===== */
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    /* minmax(0,1fr) rather than 1fr: a bare 1fr track floors at the cell's
+       min-content width, so the grid refuses to shrink on narrow screens. */
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 2px;
 }
 
@@ -446,12 +565,14 @@ section > h2 {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 0.5rem;
     margin-bottom: 1rem;
 }
 
 .calendar-header h3 {
     font-size: 1.1rem;
     font-weight: 600;
+    /* Announce month changes politely to screen readers */
 }
 
 .calendar-day-label {
@@ -464,7 +585,9 @@ section > h2 {
     padding: 0.5rem;
 }
 
+/* Days are real buttons: focusable, keyboard-operable, announced properly */
 .calendar-day {
+    width: 100%;
     aspect-ratio: 1;
     display: flex;
     align-items: center;
@@ -472,13 +595,20 @@ section > h2 {
     font-size: 0.85rem;
     border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all var(--transition);
+    transition: background-color var(--transition), color var(--transition);
     color: var(--text-secondary);
 }
 
 .calendar-day:hover {
     background: var(--bg-card-hover);
     color: var(--text-primary);
+}
+
+.calendar-day.selected {
+    background: var(--accent-glow);
+    color: var(--accent-light);
+    font-weight: 600;
+    box-shadow: inset 0 0 0 2px var(--accent-light);
 }
 
 .calendar-day.today {
@@ -501,9 +631,18 @@ section > h2 {
     border-radius: 50%;
 }
 
+/* On today, the dot needs to contrast against the accent fill */
+.calendar-day.today.has-event::after {
+    background: #fff;
+}
+
 .calendar-day.other-month {
     color: var(--text-muted);
-    opacity: 0.4;
+    background: transparent;
+}
+
+.calendar-day.other-month:hover {
+    color: var(--text-primary);
 }
 
 /* ===== Notes ===== */
@@ -520,13 +659,18 @@ section > h2 {
     border-radius: var(--radius);
     padding: 1.25rem;
     transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+a.note-card,
+button.note-card {
     cursor: pointer;
 }
 
-.note-card:hover {
+a.note-card:hover,
+button.note-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    border-color: var(--accent-glow);
+    border-color: var(--border-strong);
 }
 
 .note-card h3 {
@@ -558,6 +702,35 @@ section > h2 {
     margin-bottom: 0.75rem;
 }
 
+.note-color-accent { background: var(--accent); }
+.note-color-success { background: var(--success); }
+.note-color-warning { background: var(--warning); }
+.note-color-danger { background: var(--danger); }
+.note-color-cyan { background: #06b6d4; }
+.note-color-pink { background: #f472b6; }
+
+/* Note composer */
+.note-form input,
+.note-form textarea {
+    width: 100%;
+}
+
+.note-form input {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.note-form textarea {
+    resize: vertical;
+    display: block;
+}
+
+.note-form-actions {
+    margin-top: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
 /* ===== Progress ===== */
 .progress-item {
     margin-bottom: 1.25rem;
@@ -566,6 +739,7 @@ section > h2 {
 .progress-label {
     display: flex;
     justify-content: space-between;
+    gap: 1rem;
     margin-bottom: 0.5rem;
     font-size: 0.85rem;
 }
@@ -576,6 +750,7 @@ section > h2 {
 
 .progress-label span:last-child {
     color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
 }
 
 .progress-bar {
@@ -599,22 +774,35 @@ section > h2 {
     gap: 1rem;
 }
 
+.goals-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.goals-header h2 {
+    margin-bottom: 0;
+}
+
 .goal-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.25rem;
-    transition: all var(--transition);
+    transition: border-color var(--transition);
 }
 
 .goal-card:hover {
-    border-color: var(--accent-glow);
+    border-color: var(--border-strong);
 }
 
 .goal-header {
     display: flex;
     align-items: start;
     justify-content: space-between;
+    gap: 1rem;
     margin-bottom: 0.75rem;
 }
 
@@ -630,6 +818,7 @@ section > h2 {
     letter-spacing: 0.05em;
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
+    flex-shrink: 0;
 }
 
 .badge-active {
@@ -670,13 +859,17 @@ section > h2 {
 .milestone-check {
     width: 16px;
     height: 16px;
-    border: 2px solid var(--border);
+    border: 2px solid var(--border-strong);
     border-radius: 50%;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.6rem;
+}
+
+.milestone.done {
+    color: var(--text-muted);
 }
 
 .milestone.done .milestone-check {
@@ -712,41 +905,6 @@ section > h2 {
     gap: 1.5rem;
 }
 
-/* ===== Responsive ===== */
-@media (max-width: 768px) {
-    aside {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-
-    aside.open {
-        transform: translateX(0);
-    }
-
-    main {
-        margin-left: 0;
-        padding: 1.25rem;
-    }
-
-    .stats-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .two-col {
-        grid-template-columns: 1fr;
-    }
-
-    .notes-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 /* ===== Task Form ===== */
 .task-form {
     display: flex;
@@ -767,7 +925,7 @@ section > h2 {
 }
 
 .form-label .required {
-    color: var(--danger);
+    color: var(--danger-text);
     margin-left: 0.15rem;
 }
 
@@ -809,10 +967,6 @@ section > h2 {
 }
 
 /* ===== Enhanced Task Items ===== */
-.task-item {
-    position: relative;
-}
-
 .task-content {
     flex: 1;
     min-width: 0;
@@ -851,9 +1005,10 @@ section > h2 {
     margin-left: auto;
 }
 
+/* 44x44 meets touch-target guidance */
 .btn-icon {
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     padding: 0;
     display: flex;
     align-items: center;
@@ -863,27 +1018,29 @@ section > h2 {
     border-radius: var(--radius-sm);
     font-size: 0.9rem;
     cursor: pointer;
-    transition: all var(--transition);
+    transition: background-color var(--transition), border-color var(--transition);
 }
 
 .btn-icon:hover {
     background: var(--bg-card-hover);
-    border-color: var(--accent);
+    border-color: var(--accent-light);
 }
 
-.btn-icon:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--accent-glow);
+.btn-icon:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+}
+
+.btn-icon.danger:hover {
+    background: rgba(248, 113, 113, 0.15);
+    border-color: var(--danger-text);
 }
 
 /* ===== Modal ===== */
 .modal {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(4px);
     z-index: 1000;
@@ -938,7 +1095,7 @@ section > h2 {
     z-index: 2000;
     opacity: 0;
     transform: translateY(100px);
-    transition: all 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: none;
 }
 
@@ -957,7 +1114,7 @@ section > h2 {
 }
 
 .toast-info {
-    border-left: 4px solid var(--accent);
+    border-left: 4px solid var(--accent-light);
 }
 
 /* ===== Empty State (enhanced) ===== */
@@ -969,8 +1126,60 @@ section > h2 {
     font-style: italic;
 }
 
-/* ===== Mobile Responsive Enhancements ===== */
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
+    .nav-toggle {
+        display: inline-flex;
+    }
+
+    .nav-scrim {
+        display: block;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity var(--transition), visibility var(--transition);
+    }
+
+    body.nav-open .nav-scrim {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    aside {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    body.nav-open aside {
+        transform: translateX(0);
+    }
+
+    /* Sidebar is off-canvas here, so it no longer occupies body space */
+    body {
+        padding-left: 0;
+    }
+
+    main {
+        /* Room for the fixed nav toggle */
+        padding: 4.5rem 1.25rem 1.25rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .two-col {
+        grid-template-columns: 1fr;
+    }
+
+    .notes-grid {
+        grid-template-columns: 1fr;
+    }
+
     .form-row {
         grid-template-columns: 1fr;
     }
@@ -1002,11 +1211,31 @@ section > h2 {
 }
 
 @media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
     .form-actions {
         flex-direction: column;
     }
 
     .form-actions .btn {
         width: 100%;
+    }
+}
+
+/* ===== Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

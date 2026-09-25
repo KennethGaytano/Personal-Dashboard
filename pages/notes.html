@@ -8,94 +8,121 @@
 </head>
 <body>
 
-    <aside>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sidebar" aria-label="Open navigation menu">
+        <span class="icon-open" aria-hidden="true">☰</span>
+        <span class="icon-close" aria-hidden="true">✕</span>
+    </button>
+
+    <button type="button" class="nav-scrim" tabindex="-1" aria-hidden="true"></button>
+
+    <aside id="sidebar">
         <div class="sidebar-logo">
-            <h2>📊 Dashboard</h2>
+            <h2><span aria-hidden="true">📊</span> Dashboard</h2>
         </div>
-        <nav class="sidebar-nav">
+        <nav class="sidebar-nav" aria-label="Main">
             <a href="../index.html">
-                <span class="nav-icon">🏠</span> Home
+                <span class="nav-icon" aria-hidden="true">🏠</span> Home
             </a>
             <a href="tasks.html">
-                <span class="nav-icon">✅</span> Tasks
+                <span class="nav-icon" aria-hidden="true">✅</span> Tasks
             </a>
             <a href="calendar.html">
-                <span class="nav-icon">📅</span> Calendar
+                <span class="nav-icon" aria-hidden="true">📅</span> Calendar
             </a>
-            <a href="notes.html" class="active">
-                <span class="nav-icon">📝</span> Notes
+            <a href="notes.html" class="active" aria-current="page">
+                <span class="nav-icon" aria-hidden="true">📝</span> Notes
             </a>
             <a href="progress.html">
-                <span class="nav-icon">📈</span> Progress
+                <span class="nav-icon" aria-hidden="true">📈</span> Progress
             </a>
             <a href="goals.html">
-                <span class="nav-icon">🎯</span> Goals
+                <span class="nav-icon" aria-hidden="true">🎯</span> Goals
             </a>
         </nav>
     </aside>
 
-    <main>
+    <main id="main-content">
 
         <header>
-            <h1>Notes 📝</h1>
+            <h1>Notes <span aria-hidden="true">📝</span></h1>
             <p>Jot down ideas, reminders, and thoughts.</p>
         </header>
 
         <section>
             <h2>New Note</h2>
             <div class="card">
-                <input type="text" placeholder="Title" style="width: 100%; margin-bottom: 0.75rem; font-weight: 600;">
-                <textarea placeholder="Write something..." rows="4" style="width: 100%; resize: vertical;"></textarea>
-                <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem;">
-                    <button class="btn btn-primary">💾 Save</button>
-                    <button class="btn btn-secondary">✖ Clear</button>
-                </div>
+                <form class="note-form">
+                    <div class="form-group">
+                        <label for="noteTitle" class="form-label">Title</label>
+                        <input
+                            type="text"
+                            id="noteTitle"
+                            name="title"
+                            placeholder="What is this note about?"
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="noteBody" class="form-label">Note</label>
+                        <textarea
+                            id="noteBody"
+                            name="body"
+                            placeholder="Write something..."
+                            rows="4"
+                        ></textarea>
+                    </div>
+                    <div class="note-form-actions">
+                        <button type="submit" class="btn btn-primary"><span aria-hidden="true">💾</span> Save</button>
+                        <button type="reset" class="btn btn-secondary"><span aria-hidden="true">✖</span> Clear</button>
+                    </div>
+                </form>
             </div>
         </section>
 
         <section>
             <h2>All Notes</h2>
             <div class="notes-grid">
-                <div class="note-card">
-                    <div class="note-color-bar" style="background: var(--accent);"></div>
+                <article class="note-card">
+                    <div class="note-color-bar note-color-accent" aria-hidden="true"></div>
                     <h3>Meeting Notes</h3>
                     <p>Discuss project timeline and allocate resources for Q4 deliverables. Review the sprint backlog and identify blockers.</p>
                     <div class="note-date">Sep 24, 2026</div>
-                </div>
-                <div class="note-card">
-                    <div class="note-color-bar" style="background: var(--success);"></div>
+                </article>
+                <article class="note-card">
+                    <div class="note-color-bar note-color-success" aria-hidden="true"></div>
                     <h3>Book Recommendations</h3>
                     <p>Clean Code, The Pragmatic Programmer, Designing Data-Intensive Applications, Refactoring by Fowler.</p>
                     <div class="note-date">Sep 23, 2026</div>
-                </div>
-                <div class="note-card">
-                    <div class="note-color-bar" style="background: var(--warning);"></div>
+                </article>
+                <article class="note-card">
+                    <div class="note-color-bar note-color-warning" aria-hidden="true"></div>
                     <h3>Ideas Backlog</h3>
                     <p>Build a habit tracker, automate weekly reports, learn Rust basics, contribute to open-source.</p>
                     <div class="note-date">Sep 20, 2026</div>
-                </div>
-                <div class="note-card">
-                    <div class="note-color-bar" style="background: var(--danger);"></div>
+                </article>
+                <article class="note-card">
+                    <div class="note-color-bar note-color-danger" aria-hidden="true"></div>
                     <h3>Bug Fixes</h3>
                     <p>Login redirect loop on Safari, form validation not triggering on mobile, dark mode flicker on load.</p>
                     <div class="note-date">Sep 18, 2026</div>
-                </div>
-                <div class="note-card">
-                    <div class="note-color-bar" style="background: #06b6d4;"></div>
+                </article>
+                <article class="note-card">
+                    <div class="note-color-bar note-color-cyan" aria-hidden="true"></div>
                     <h3>Study Plan</h3>
                     <p>Week 1: Data structures review. Week 2: Graph algorithms. Week 3: Dynamic programming. Week 4: Mock interviews.</p>
                     <div class="note-date">Sep 15, 2026</div>
-                </div>
-                <div class="note-card">
-                    <div class="note-color-bar" style="background: #f472b6;"></div>
+                </article>
+                <article class="note-card">
+                    <div class="note-color-bar note-color-pink" aria-hidden="true"></div>
                     <h3>Fitness Goals</h3>
                     <p>Run 3x/week, push-ups daily, stretch every morning. Track calories with app. Aim for 8 hours sleep.</p>
                     <div class="note-date">Sep 12, 2026</div>
-                </div>
+                </article>
             </div>
         </section>
 
     </main>
 
-</body>
+    <script src="../scripts/nav.js"></script>
 </html>

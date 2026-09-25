@@ -27,9 +27,18 @@
     const completedCount = tasks.filter(t => t.status === 'completed').length;
     const totalCount = tasks.length;
 
-    const taskStatValue = document.querySelector('.stat-card .stat-value');
-    if (taskStatValue) {
-      taskStatValue.textContent = `${completedCount}/${totalCount}`;
+    // Target the Tasks card specifically, not whichever card renders first
+    const taskCard = Array.from(document.querySelectorAll('.stat-card'))
+      .find(card => {
+        const heading = card.querySelector('h3');
+        return heading && heading.textContent.trim() === 'Tasks';
+      });
+
+    if (taskCard) {
+      const value = taskCard.querySelector('.stat-value');
+      if (value) {
+        value.textContent = `${completedCount}/${totalCount}`;
+      }
     }
   }
 
@@ -64,11 +73,11 @@
         <input
           type="checkbox"
           ${task.status === 'completed' ? 'checked' : ''}
-          onchange="toggleHomeTask('${task.id}')"
-          aria-label="Mark task as ${task.status === 'completed' ? 'incomplete' : 'complete'}"
+          onchange="toggleHomeTask('${escapeHtml(task.id)}')"
+          aria-label="Mark task ${escapeHtml(task.title)} as ${task.status === 'completed' ? 'incomplete' : 'complete'}"
         >
         <span class="task-text">${escapeHtml(task.title)}</span>
-        ${task.priority ? `<span class="task-priority priority-${task.priority}">${task.priority}</span>` : ''}
+        ${task.priority ? `<span class="task-priority priority-${escapeHtml(task.priority)}">${escapeHtml(task.priority)}</span>` : ''}
       </div>
     `).join('');
   }
@@ -109,9 +118,35 @@
   };
 
   /**
+   * Greet the user according to the time of day
+   */
+  function setGreeting() {
+    const heading = document.getElementById('greeting');
+    if (!heading) return;
+
+    const hour = new Date().getHours();
+    let greeting;
+    let icon;
+
+    if (hour < 12) {
+      greeting = 'Good morning!';
+      icon = '☀️';
+    } else if (hour < 18) {
+      greeting = 'Good afternoon!';
+      icon = '🌤️';
+    } else {
+      greeting = 'Good evening!';
+      icon = '🌙';
+    }
+
+    heading.innerHTML = `${greeting} <span aria-hidden="true">${icon}</span>`;
+  }
+
+  /**
    * Initialize home page task display
    */
   function init() {
+    setGreeting();
     renderHomeTasks();
     updateTaskCount();
   }

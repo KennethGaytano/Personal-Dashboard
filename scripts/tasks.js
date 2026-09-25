@@ -23,6 +23,9 @@ const TaskPriority = {
 // Current edit state
 let editingTaskId = null;
 
+// Element focused before the modal opened, restored on close
+let modalOpener = null;
+
 /**
  * Generate unique ID for tasks
  */
@@ -69,8 +72,8 @@ function createTask(taskData) {
 
   const task = {
     id: generateId(),
-    title: sanitizeInput(taskData.title.trim()),
-    description: taskData.description ? sanitizeInput(taskData.description.trim()) : '',
+    title: taskData.title.trim(),
+    description: taskData.description ? taskData.description.trim() : '',
     dueDate: taskData.dueDate || '',
     dueTime: taskData.dueDate && taskData.dueTime ? taskData.dueTime : '',
     status: taskData.status || TaskStatus.TODO,
@@ -109,9 +112,9 @@ function updateTask(taskId, updates) {
   }
 
   // Sanitize string fields
-  if (updates.title) updates.title = sanitizeInput(updates.title.trim());
+  if (updates.title) updates.title = updates.title.trim();
   if (updates.description !== undefined) {
-    updates.description = sanitizeInput(updates.description.trim());
+    updates.description = updates.description.trim();
   }
 
   tasks[index] = {
@@ -167,11 +170,12 @@ function toggleTaskStatus(taskId) {
 }
 
 /**
- * Sanitize user input to prevent XSS
+ * Escape a string for safe interpolation into an HTML template.
+ * Values are stored raw; escaping happens only at render time.
  */
-function sanitizeInput(str) {
+function escapeHtml(str) {
   const div = document.createElement('div');
-  div.textContent = str;
+  div.textContent = str == null ? '' : String(str);
   return div.innerHTML;
 }
 
@@ -209,33 +213,35 @@ function renderTaskSection(containerId, tasks, emptyMessage) {
   }
 
   container.innerHTML = tasks.map(task => `
-    <div class="task-item ${task.status === TaskStatus.COMPLETED ? 'completed' : ''}" data-task-id="${task.id}">
+    <div class="task-item ${task.status === TaskStatus.COMPLETED ? 'completed' : ''}" data-task-id="${escapeHtml(task.id)}">
       <input
         type="checkbox"
         ${task.status === TaskStatus.COMPLETED ? 'checked' : ''}
-        onchange="handleToggleTask('${task.id}')"
-        aria-label="Mark task as ${task.status === TaskStatus.COMPLETED ? 'incomplete' : 'complete'}"
+        onchange="handleToggleTask('${escapeHtml(task.id)}')"
+        aria-label="Mark task ${escapeHtml(task.title)} as ${task.status === TaskStatus.COMPLETED ? 'incomplete' : 'complete'}"
       >
       <div class="task-content">
         <div class="task-header">
-          <span class="task-text">${task.title}</span>
-          ${task.priority ? `<span class="task-priority priority-${task.priority}">${task.priority}</span>` : ''}
+          <span class="task-text">${escapeHtml(task.title)}</span>
+          ${task.priority ? `<span class="task-priority priority-${escapeHtml(task.priority)}">${escapeHtml(task.priority)}</span>` : ''}
           <div class="task-actions">
             <button
+              type="button"
               class="btn-icon"
-              onclick="startEditTask('${task.id}')"
-              aria-label="Edit task"
+              onclick="startEditTask('${escapeHtml(task.id)}')"
+              aria-label="Edit task ${escapeHtml(task.title)}"
               title="Edit"
-            >✏️</button>
+            ><span aria-hidden="true">✏️</span></button>
             <button
-              class="btn-icon"
-              onclick="confirmDeleteTask('${task.id}')"
-              aria-label="Delete task"
+              type="button"
+              class="btn-icon danger"
+              onclick="confirmDeleteTask('${escapeHtml(task.id)}')"
+              aria-label="Delete task ${escapeHtml(task.title)}"
               title="Delete"
-            >🗑️</button>
+            ><span aria-hidden="true">🗑️</span></button>
           </div>
         </div>
-        ${task.description ? `<p class="task-description">${task.description}</p>` : ''}
+        ${task.description ? `<p class="task-description">${escapeHtml(task.description)}</p>` : ''}
         ${formatDueDateTime(task) ? `<p class="task-due-date">${formatDueDateTime(task)}</p>` : ''}
       </div>
     </div>
@@ -422,10 +428,20 @@ function confirmDeleteTask(taskId) {
   const message = document.getElementById('confirmMessage');
 
   message.textContent = `Are you sure you want to delete "${task.title}"? This action cannot be undone.`;
+
+  // Remember who opened it so focus can be restored on close
+  modalOpener = document.activeElement;
+
   modal.style.display = 'flex';
 
   // Store taskId for confirmation
   modal.dataset.taskId = taskId;
+
+  // Move focus into the dialog; the safe default is Cancel
+  const cancelBtn = document.getElementById('cancelModal');
+  if (cancelBtn) {
+    cancelBtn.focus();
+  }
 }
 
 // Expose functions globally for inline event handlers
@@ -456,8 +472,43 @@ function handleConfirmDelete() {
  */
 function closeModal() {
   const modal = document.getElementById('confirmModal');
+  if (!modal || modal.style.display === 'none') return;
+
   modal.style.display = 'none';
   delete modal.dataset.taskId;
+
+  // Return focus to the control that opened the dialog
+  if (modalOpener && document.contains(modalOpener)) {
+    modalOpener.focus();
+  }
+  modalOpener = null;
+}
+
+/**
+ * Keep Tab cycling inside the open dialog
+ */
+function trapModalFocus(event) {
+  if (event.key !== 'Tab') return;
+
+  const modal = document.getElementById('confirmModal');
+  if (!modal || modal.style.display === 'none') return;
+
+  const focusable = Array.from(
+    modal.querySelectorAll('button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+  ).filter(el => el.offsetParent !== null);
+
+  if (focusable.length === 0) return;
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
 }
 
 /**
@@ -527,6 +578,18 @@ function initTaskManager() {
       }
     });
   }
+
+  // Escape closes the dialog; Tab cycles within it while open
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      const modal = document.getElementById('confirmModal');
+      if (modal && modal.style.display !== 'none') {
+        closeModal();
+      }
+      return;
+    }
+    trapModalFocus(event);
+  });
 
   console.log('Task manager initialized');
 }

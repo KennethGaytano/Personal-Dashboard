@@ -8,36 +8,45 @@
 </head>
 <body>
 
-    <aside>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sidebar" aria-label="Open navigation menu">
+        <span class="icon-open" aria-hidden="true">☰</span>
+        <span class="icon-close" aria-hidden="true">✕</span>
+    </button>
+
+    <button type="button" class="nav-scrim" tabindex="-1" aria-hidden="true"></button>
+
+    <aside id="sidebar">
         <div class="sidebar-logo">
-            <h2>📊 Dashboard</h2>
+            <h2><span aria-hidden="true">📊</span> Dashboard</h2>
         </div>
-        <nav class="sidebar-nav">
+        <nav class="sidebar-nav" aria-label="Main">
             <a href="../index.html">
-                <span class="nav-icon">🏠</span> Home
+                <span class="nav-icon" aria-hidden="true">🏠</span> Home
             </a>
-            <a href="tasks.html" class="active">
-                <span class="nav-icon">✅</span> Tasks
+            <a href="tasks.html" class="active" aria-current="page">
+                <span class="nav-icon" aria-hidden="true">✅</span> Tasks
             </a>
             <a href="calendar.html">
-                <span class="nav-icon">📅</span> Calendar
+                <span class="nav-icon" aria-hidden="true">📅</span> Calendar
             </a>
             <a href="notes.html">
-                <span class="nav-icon">📝</span> Notes
+                <span class="nav-icon" aria-hidden="true">📝</span> Notes
             </a>
             <a href="progress.html">
-                <span class="nav-icon">📈</span> Progress
+                <span class="nav-icon" aria-hidden="true">📈</span> Progress
             </a>
             <a href="goals.html">
-                <span class="nav-icon">🎯</span> Goals
+                <span class="nav-icon" aria-hidden="true">🎯</span> Goals
             </a>
         </nav>
     </aside>
 
-    <main>
+    <main id="main-content">
 
         <header>
-            <h1>Tasks ✅</h1>
+            <h1>Tasks <span aria-hidden="true">✅</span></h1>
             <p>Manage and track your to-do list.</p>
         </header>
 
@@ -161,6 +170,7 @@
     <!-- Toast Notification -->
     <div id="toast" class="toast" role="alert" aria-live="polite"></div>
 
+    <script src="../scripts/nav.js"></script>
     <script src="../scripts/tasks.js"></script>
 </body>
 </html>
