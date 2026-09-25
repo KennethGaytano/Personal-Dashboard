@@ -16,6 +16,6 @@ Current Status: The Tasks section is currently the only fully working section. O
 
 - `index.html` — home page and deployed entry point.
 - `pages/` — dashboard feature pages.
-- `scripts/` — browser JavaScript for task data and home-page summaries.
+- `scripts/` — JavaScript files that provide functionality and interactivity for the website.
 - `styles/` — shared dashboard styling.
 - `.claude/skills/run-personal-dashboard/` — local server and Playwright checks.
