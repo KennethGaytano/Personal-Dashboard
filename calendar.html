@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Calendar</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <aside>
+        <div class="sidebar-logo">
+            <h2>📊 Dashboard</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html">
+                <span class="nav-icon">🏠</span> Home
+            </a>
+            <a href="tasks.html">
+                <span class="nav-icon">✅</span> Tasks
+            </a>
+            <a href="calendar.html" class="active">
+                <span class="nav-icon">📅</span> Calendar
+            </a>
+            <a href="notes.html">
+                <span class="nav-icon">📝</span> Notes
+            </a>
+            <a href="progress.html">
+                <span class="nav-icon">📈</span> Progress
+            </a>
+            <a href="goals.html">
+                <span class="nav-icon">🎯</span> Goals
+            </a>
+        </nav>
+    </aside>
+
+    <main>
+
+        <header>
+            <h1>Calendar 📅</h1>
+            <p>Plan and view your schedule.</p>
+        </header>
+
+        <section>
+            <div class="card">
+                <div class="calendar-header">
+                    <button class="btn btn-secondary btn-sm">← Prev</button>
+                    <h3>September 2026</h3>
+                    <button class="btn btn-secondary btn-sm">Next →</button>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="calendar-day-label">Sun</div>
+                    <div class="calendar-day-label">Mon</div>
+                    <div class="calendar-day-label">Tue</div>
+                    <div class="calendar-day-label">Wed</div>
+                    <div class="calendar-day-label">Thu</div>
+                    <div class="calendar-day-label">Fri</div>
+                    <div class="calendar-day-label">Sat</div>
+
+                    <!-- Aug tail -->
+                    <div class="calendar-day other-month">30</div>
+                    <div class="calendar-day other-month">31</div>
+                    <!-- Sep 1 = Tue -->
+                    <div class="calendar-day">1</div>
+                    <div class="calendar-day">2</div>
+                    <div class="calendar-day">3</div>
+                    <div class="calendar-day">4</div>
+                    <div class="calendar-day">5</div>
+
+                    <div class="calendar-day">6</div>
+                    <div class="calendar-day has-event">7</div>
+                    <div class="calendar-day">8</div>
+                    <div class="calendar-day">9</div>
+                    <div class="calendar-day has-event">10</div>
+                    <div class="calendar-day">11</div>
+                    <div class="calendar-day">12</div>
+
+                    <div class="calendar-day">13</div>
+                    <div class="calendar-day">14</div>
+                    <div class="calendar-day has-event">15</div>
+                    <div class="calendar-day">16</div>
+                    <div class="calendar-day">17</div>
+                    <div class="calendar-day">18</div>
+                    <div class="calendar-day">19</div>
+
+                    <div class="calendar-day">20</div>
+                    <div class="calendar-day">21</div>
+                    <div class="calendar-day">22</div>
+                    <div class="calendar-day">23</div>
+                    <div class="calendar-day today">24</div>
+                    <div class="calendar-day">25</div>
+                    <div class="calendar-day">26</div>
+
+                    <div class="calendar-day">27</div>
+                    <div class="calendar-day has-event">28</div>
+                    <div class="calendar-day">29</div>
+                    <div class="calendar-day">30</div>
+                    <!-- Oct fill -->
+                    <div class="calendar-day other-month">1</div>
+                    <div class="calendar-day other-month">2</div>
+                    <div class="calendar-day other-month">3</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Upcoming Events</h2>
+            <div class="task-list">
+                <div class="task-item">
+                    <span class="nav-icon">📌</span>
+                    <span class="task-text"><strong>Sep 25</strong> — Team stand-up meeting</span>
+                </div>
+                <div class="task-item">
+                    <span class="nav-icon">📌</span>
+                    <span class="task-text"><strong>Sep 28</strong> — Project deadline: API integration</span>
+                </div>
+                <div class="task-item">
+                    <span class="nav-icon">📌</span>
+                    <span class="task-text"><strong>Oct 1</strong> — Monthly review</span>
+                </div>
+                <div class="task-item">
+                    <span class="nav-icon">📌</span>
+                    <span class="task-text"><strong>Oct 5</strong> — Study group session</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Notes</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <aside>
+        <div class="sidebar-logo">
+            <h2>📊 Dashboard</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html">
+                <span class="nav-icon">🏠</span> Home
+            </a>
+            <a href="tasks.html">
+                <span class="nav-icon">✅</span> Tasks
+            </a>
+            <a href="calendar.html">
+                <span class="nav-icon">📅</span> Calendar
+            </a>
+            <a href="notes.html" class="active">
+                <span class="nav-icon">📝</span> Notes
+            </a>
+            <a href="progress.html">
+                <span class="nav-icon">📈</span> Progress
+            </a>
+            <a href="goals.html">
+                <span class="nav-icon">🎯</span> Goals
+            </a>
+        </nav>
+    </aside>
+
+    <main>
+
+        <header>
+            <h1>Notes 📝</h1>
+            <p>Jot down ideas, reminders, and thoughts.</p>
+        </header>
+
+        <section>
+            <h2>New Note</h2>
+            <div class="card">
+                <input type="text" placeholder="Title" style="width: 100%; margin-bottom: 0.75rem; font-weight: 600;">
+                <textarea placeholder="Write something..." rows="4" style="width: 100%; resize: vertical;"></textarea>
+                <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem;">
+                    <button class="btn btn-primary">💾 Save</button>
+                    <button class="btn btn-secondary">✖ Clear</button>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>All Notes</h2>
+            <div class="notes-grid">
+                <div class="note-card">
+                    <div class="note-color-bar" style="background: var(--accent);"></div>
+                    <h3>Meeting Notes</h3>
+                    <p>Discuss project timeline and allocate resources for Q4 deliverables. Review the sprint backlog and identify blockers.</p>
+                    <div class="note-date">Sep 24, 2026</div>
+                </div>
+                <div class="note-card">
+                    <div class="note-color-bar" style="background: var(--success);"></div>
+                    <h3>Book Recommendations</h3>
+                    <p>Clean Code, The Pragmatic Programmer, Designing Data-Intensive Applications, Refactoring by Fowler.</p>
+                    <div class="note-date">Sep 23, 2026</div>
+                </div>
+                <div class="note-card">
+                    <div class="note-color-bar" style="background: var(--warning);"></div>
+                    <h3>Ideas Backlog</h3>
+                    <p>Build a habit tracker, automate weekly reports, learn Rust basics, contribute to open-source.</p>
+                    <div class="note-date">Sep 20, 2026</div>
+                </div>
+                <div class="note-card">
+                    <div class="note-color-bar" style="background: var(--danger);"></div>
+                    <h3>Bug Fixes</h3>
+                    <p>Login redirect loop on Safari, form validation not triggering on mobile, dark mode flicker on load.</p>
+                    <div class="note-date">Sep 18, 2026</div>
+                </div>
+                <div class="note-card">
+                    <div class="note-color-bar" style="background: #06b6d4;"></div>
+                    <h3>Study Plan</h3>
+                    <p>Week 1: Data structures review. Week 2: Graph algorithms. Week 3: Dynamic programming. Week 4: Mock interviews.</p>
+                    <div class="note-date">Sep 15, 2026</div>
+                </div>
+                <div class="note-card">
+                    <div class="note-color-bar" style="background: #f472b6;"></div>
+                    <h3>Fitness Goals</h3>
+                    <p>Run 3x/week, push-ups daily, stretch every morning. Track calories with app. Aim for 8 hours sleep.</p>
+                    <div class="note-date">Sep 12, 2026</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>

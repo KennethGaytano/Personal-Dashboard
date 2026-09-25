@@ -1,0 +1,283 @@
+#!/usr/bin/env node
+/**
+ * Automated Tests for Task Tab Functionality
+ * Tests CRUD operations, localStorage persistence, validation, deletion confirmation, and responsive design.
+ */
+
+import { chromium } from 'playwright';
+import { spawn } from 'child_process';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const SERVER_SCRIPT = join(__dirname, 'server.mjs');
+const PORT = 3000;
+const BASE_URL = `http://localhost:${PORT}/tasks.html`;
+
+let testCount = 0;
+let passedCount = 0;
+let failedCount = 0;
+
+function assert(condition, message) {
+  testCount++;
+  if (condition) {
+    passedCount++;
+    console.log(`  ✓ ${message}`);
+  } else {
+    failedCount++;
+    console.error(`  ✗ FAIL: ${message}`);
+  }
+}
+
+async function runTests() {
+  console.log('=== Task Tab Automated Test Suite ===\n');
+
+  // Start server
+  const server = spawn('node', [SERVER_SCRIPT], {
+    env: { ...process.env, PORT: PORT.toString() },
+    stdio: 'ignore'
+  });
+  await new Promise(r => setTimeout(r, 1000));
+
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    const page = await browser.newPage();
+
+    // -------------------------------------------------------------
+    // Test 1: Page Load & Empty State
+    // -------------------------------------------------------------
+    console.log('--- Test Group 1: Page Load & Initial State ---');
+    await page.goto(BASE_URL);
+
+    // Clear localStorage to start clean
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+
+    const title = await page.title();
+    assert(title.includes('Tasks'), `Page title is correct ("${title}")`);
+
+    const todoEmpty = await page.locator('#todoList .empty-state').textContent();
+    assert(todoEmpty.includes('No tasks to do'), 'To Do section shows empty state');
+
+    const inProgressEmpty = await page.locator('#inProgressList .empty-state').textContent();
+    assert(inProgressEmpty.includes('No tasks in progress'), 'In Progress section shows empty state');
+
+    const completedEmpty = await page.locator('#completedList .empty-state').textContent();
+    assert(completedEmpty.includes('No completed tasks'), 'Completed section shows empty state');
+
+    // -------------------------------------------------------------
+    // Test 2: Form Validation
+    // -------------------------------------------------------------
+    console.log('\n--- Test Group 2: Form Validation ---');
+    const titleInput = page.locator('#taskTitle');
+
+    // Check required attribute
+    const isRequired = await titleInput.getAttribute('required');
+    assert(isRequired !== null, 'Task title input has required attribute');
+
+    // Try submitting empty title via JS
+    const submitResult = await page.evaluate(() => {
+      const form = document.getElementById('taskForm');
+      document.getElementById('taskTitle').value = '';
+      const event = new Event('submit', { cancelable: true });
+      form.dispatchEvent(event);
+      return localStorage.getItem('dashboard_tasks');
+    });
+    assert(!submitResult || JSON.parse(submitResult).length === 0, 'Empty title does not create a task');
+
+    // -------------------------------------------------------------
+    // Test 3: Add Task (To Do, High Priority, Description, Due Date)
+    // -------------------------------------------------------------
+    console.log('\n--- Test Group 3: Add Task Functionality ---');
+    await page.fill('#taskTitle', 'Finish Q4 report');
+    await page.fill('#taskDescription', 'Compile financial figures and executive summary');
+    await page.fill('#taskDueDate', '2026-10-15');
+    await page.selectOption('#taskStatus', 'todo');
+    await page.selectOption('#taskPriority', 'high');
+    await page.click('#submitBtn');
+
+    // Verify task is rendered in To Do list
+    await page.waitForSelector('#todoList .task-item');
+    const taskTitle = await page.locator('#todoList .task-item .task-text').textContent();
+    assert(taskTitle === 'Finish Q4 report', `Task added with title: "${taskTitle}"`);
+
+    const taskDesc = await page.locator('#todoList .task-item .task-description').textContent();
+    assert(taskDesc.includes('financial figures'), 'Task description rendered correctly');
+
+    const taskPriority = await page.locator('#todoList .task-item .task-priority').textContent();
+    assert(taskPriority === 'high', `Task priority is high`);
+
+    const taskDue = await page.locator('#todoList .task-item .task-due-date').textContent();
+    assert(taskDue.includes('Oct 15, 2026'), `Task due date formatted correctly ("${taskDue}")`);
+
+    // -------------------------------------------------------------
+    // Test 4: Add In Progress & Completed Tasks
+    // -------------------------------------------------------------
+    console.log('\n--- Test Group 4: Add Multiple Tasks with Different Statuses ---');
+    // Add In Progress task
+    await page.fill('#taskTitle', 'Write Unit Tests');
+    await page.selectOption('#taskStatus', 'in_progress');
+    await page.selectOption('#taskPriority', 'medium');
+    await page.click('#submitBtn');
+
+    await page.waitForSelector('#inProgressList .task-item');
+    const inProgressCount = await page.locator('#inProgressList .task-item').count();
+    assert(inProgressCount === 1, 'In Progress list has 1 task');
+
+    // Add Completed task
+    await page.fill('#taskTitle', 'Setup Dev Environment');
+    await page.selectOption('#taskStatus', 'completed');
+    await page.selectOption('#taskPriority', 'low');
+    await page.click('#submitBtn');
+
+    await page.waitForSelector('#completedList .task-item');
+    const completedCount = await page.locator('#completedList .task-item').count();
+    assert(completedCount === 1, 'Completed list has 1 task');
+
+    // -------------------------------------------------------------
+    // Test 5: Toggle Status via Checkbox
+    // -------------------------------------------------------------
+    console.log('\n--- Test Group 5: Toggle Task Status via Checkbox ---');
+    // Toggle the 'Finish Q4 report' task in To Do list -> Should move to Completed
+    await page.locator('#todoList .task-item input[type="checkbox"]').click();
+
+    // Check completed count is now 2
+    await page.waitForFunction(() => document.querySelectorAll('#completedList .task-item').length === 2);
+    const newCompletedCount = await page.locator('#completedList .task-item').count();
+    assert(newCompletedCount === 2, 'Toggling checkbox moves task to Completed list');
+
+    // Toggle it back -> Should move to To Do
+    const firstCompletedCheckbox = page.locator('#completedList .task-item input[type="checkbox"]').first();
+    await firstCompletedCheckbox.click();
+
+    await page.waitForFunction(() => document.querySelectorAll('#todoList .task-item').length === 1);
+    const newTodoCount = await page.locator('#todoList .task-item').count();
+    assert(newTodoCount === 1, 'Unchecking task moves it back to To Do list');
+
+    // -------------------------------------------------------------
+    // Test 6: Edit Task
+    // -------------------------------------------------------------
+    console.log('\n--- Test Group 6: Edit Task ---');
+    // Click edit on the task in To Do list
+    await page.locator('#todoList .task-item .btn-icon[title="Edit"]').click();
+
+    // Verify form is populated
+    const editTitleValue = await page.locator('#taskTitle').inputValue();
+    assert(editTitleValue.length > 0, `Form populated with title: "${editTitleValue}"`);
+
+    const submitBtnText = await page.locator('#submitBtn').textContent();
+    assert(submitBtnText.includes('Update'), 'Submit button changes to "Update Task"');
+
+    // Change title and status
+    await page.fill('#taskTitle', 'Finish Q4 report (REVISED)');
+    await page.selectOption('#taskPriority', 'low');
+    await page.click('#submitBtn');
+
+    // Verify task updated
+    const updatedTitle = await page.locator('#todoList .task-item .task-text').textContent();
+    assert(updatedTitle === 'Finish Q4 report (REVISED)', `Task title updated to "${updatedTitle}"`);
+
+    const updatedPriority = await page.locator('#todoList .task-item .task-priority').textContent();
+    assert(updatedPriority === 'low', 'Task priority updated to "low"');
+
+    // -------------------------------------------------------------
+    // Test 7: Cancel Edit
+    // -------------------------------------------------------------
+    console.log('\n--- Test Group 7: Cancel Edit ---');
+    await page.locator('#todoList .task-item .btn-icon[title="Edit"]').click();
+    assert(await page.locator('#cancelBtn').isVisible(), 'Cancel button is visible during edit');
+
+    await page.click('#cancelBtn');
+    const resetBtnText = await page.locator('#submitBtn').textContent();
+    assert(resetBtnText.includes('Add Task'), 'Form reset to Add mode after cancel');
+    assert(!(await page.locator('#cancelBtn').isVisible()), 'Cancel button is hidden after cancel');
+
+    // -------------------------------------------------------------
+    // Test 8: Deletion Confirmation & Deletion
+    // -------------------------------------------------------------
+    console.log('\n--- Test Group 8: Task Deletion & Confirmation ---');
+    // Click delete on In Progress task
+    await page.locator('#inProgressList .task-item .btn-icon[title="Delete"]').click();
+
+    // Verify modal appears
+    const modalVisible = await page.locator('#confirmModal').isVisible();
+    assert(modalVisible, 'Confirmation modal appears on delete click');
+
+    const modalMsg = await page.locator('#confirmMessage').textContent();
+    assert(modalMsg.includes('Write Unit Tests'), 'Modal displays correct task title');
+
+    // Cancel deletion first
+    await page.click('#cancelModal');
+    const modalHidden = !(await page.locator('#confirmModal').isVisible());
+    assert(modalHidden, 'Modal closes when clicking Cancel');
+    const stillThereCount = await page.locator('#inProgressList .task-item').count();
+    assert(stillThereCount === 1, 'Task was not deleted after canceling modal');
+
+    // Now confirm deletion
+    await page.locator('#inProgressList .task-item .btn-icon[title="Delete"]').click();
+    await page.click('#confirmDelete');
+
+    await page.waitForFunction(() => document.querySelectorAll('#inProgressList .task-item').length === 0);
+    const afterDeleteCount = await page.locator('#inProgressList .task-item').count();
+    assert(afterDeleteCount === 0, 'Task successfully deleted after confirmation');
+
+    const inProgressNowEmpty = await page.locator('#inProgressList .empty-state').textContent();
+    assert(inProgressNowEmpty.includes('No tasks in progress'), 'Empty state restored after deleting last task');
+
+    // -------------------------------------------------------------
+    // Test 9: Persistence Across Page Reload
+    // -------------------------------------------------------------
+    console.log('\n--- Test Group 9: LocalStorage Persistence Across Reload ---');
+    // Reload page
+    await page.reload();
+
+    const persistedTodo = await page.locator('#todoList .task-item .task-text').textContent();
+    assert(persistedTodo === 'Finish Q4 report (REVISED)', `Persisted task loaded after reload: "${persistedTodo}"`);
+
+    const persistedCompleted = await page.locator('#completedList .task-item .task-text').textContent();
+    assert(persistedCompleted === 'Setup Dev Environment', `Persisted completed task loaded: "${persistedCompleted}"`);
+
+    // -------------------------------------------------------------
+    // Test 10: XSS Sanitization
+    // -------------------------------------------------------------
+    console.log('\n--- Test Group 10: Input Sanitization / Security ---');
+    await page.fill('#taskTitle', '<script>alert("xss")</script>Secure Task');
+    await page.fill('#taskDescription', '<img src="x" onerror="alert(1)">Description');
+    await page.click('#submitBtn');
+
+    // Verify script did not execute, rendered safely
+    const xssTask = await page.locator('#todoList .task-item').last();
+    const xssTitleText = await xssTask.locator('.task-text').innerHTML();
+    assert(xssTitleText.includes('&lt;script&gt;'), 'HTML tags sanitized in title');
+
+    // -------------------------------------------------------------
+    // Test 11: Mobile Responsiveness
+    // -------------------------------------------------------------
+    console.log('\n--- Test Group 11: Mobile Viewport Rendering ---');
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.waitForTimeout(300);
+
+    const isMobileVisible = await page.locator('#taskForm').isVisible();
+    assert(isMobileVisible, 'Task form is responsive and visible on mobile viewport');
+
+    // Clean up
+    await browser.close();
+  } finally {
+    server.kill();
+  }
+
+  console.log(`\n=== Test Results: ${passedCount}/${testCount} passed (${failedCount} failed) ===`);
+  if (failedCount > 0) {
+    process.exit(1);
+  }
+}
+
+runTests().catch(err => {
+  console.error('Fatal test error:', err);
+  process.exit(1);
+});

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Tasks</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <aside>
+        <div class="sidebar-logo">
+            <h2>📊 Dashboard</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html">
+                <span class="nav-icon">🏠</span> Home
+            </a>
+            <a href="tasks.html" class="active">
+                <span class="nav-icon">✅</span> Tasks
+            </a>
+            <a href="calendar.html">
+                <span class="nav-icon">📅</span> Calendar
+            </a>
+            <a href="notes.html">
+                <span class="nav-icon">📝</span> Notes
+            </a>
+            <a href="progress.html">
+                <span class="nav-icon">📈</span> Progress
+            </a>
+            <a href="goals.html">
+                <span class="nav-icon">🎯</span> Goals
+            </a>
+        </nav>
+    </aside>
+
+    <main>
+
+        <header>
+            <h1>Tasks ✅</h1>
+            <p>Manage and track your to-do list.</p>
+        </header>
+
+        <!-- Add/Edit Task Form -->
+        <section>
+            <h2 id="formTitle">Add a Task</h2>
+            <div class="card">
+                <form id="taskForm" class="task-form">
+                    <div class="form-group">
+                        <label for="taskTitle" class="form-label">Task Title <span class="required">*</span></label>
+                        <input
+                            type="text"
+                            id="taskTitle"
+                            name="title"
+                            placeholder="What do you need to do?"
+                            required
+                            aria-required="true"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskDescription" class="form-label">Description</label>
+                        <textarea
+                            id="taskDescription"
+                            name="description"
+                            placeholder="Add details, notes, or subtasks..."
+                            rows="3"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="taskDueDate" class="form-label">Due Date</label>
+                            <input
+                                type="date"
+                                id="taskDueDate"
+                                name="dueDate"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="taskStatus" class="form-label">Status</label>
+                            <select id="taskStatus" name="status">
+                                <option value="todo">To do</option>
+                                <option value="in_progress">In progress</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="taskPriority" class="form-label">Priority</label>
+                            <select id="taskPriority" name="priority">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="submitBtn" class="btn btn-primary">+ Add Task</button>
+                        <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Task Lists Grouped by Status -->
+        <section>
+            <h2>To Do</h2>
+            <div id="todoList" class="task-list">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+        <section>
+            <h2>In Progress</h2>
+            <div id="inProgressList" class="task-list">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+        <section>
+            <h2>Completed</h2>
+            <div id="completedList" class="task-list">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content">
+            <h3 id="modalTitle">Delete Task</h3>
+            <p id="confirmMessage">Are you sure you want to delete this task?</p>
+            <div class="modal-actions">
+                <button type="button" id="cancelModal" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="confirmDelete" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+    <script src="tasks.js"></script>
+</body>
+</html>
