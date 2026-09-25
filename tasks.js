@@ -219,23 +219,23 @@ function renderTaskSection(containerId, tasks, emptyMessage) {
         <div class="task-header">
           <span class="task-text">${task.title}</span>
           ${task.priority ? `<span class="task-priority priority-${task.priority}">${task.priority}</span>` : ''}
+          <div class="task-actions">
+            <button
+              class="btn-icon"
+              onclick="startEditTask('${task.id}')"
+              aria-label="Edit task"
+              title="Edit"
+            >✏️</button>
+            <button
+              class="btn-icon"
+              onclick="confirmDeleteTask('${task.id}')"
+              aria-label="Delete task"
+              title="Delete"
+            >🗑️</button>
+          </div>
         </div>
         ${task.description ? `<p class="task-description">${task.description}</p>` : ''}
         ${task.dueDate ? `<p class="task-due-date">Due: ${formatDate(task.dueDate)}</p>` : ''}
-      </div>
-      <div class="task-actions">
-        <button
-          class="btn-icon"
-          onclick="startEditTask('${task.id}')"
-          aria-label="Edit task"
-          title="Edit"
-        >✏️</button>
-        <button
-          class="btn-icon"
-          onclick="confirmDeleteTask('${task.id}')"
-          aria-label="Delete task"
-          title="Delete"
-        >🗑️</button>
       </div>
     </div>
   `).join('');
