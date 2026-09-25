@@ -10,6 +10,8 @@ The live website is available for you to try and explore. You can check the curr
 
 https://kennethgaytano.github.io/Personal-Dashboard/
 
+Current Status: The Tasks section is currently the only fully working section. Other dashboard sections are still under development and will be implemented and improved as the project progresses.
+
 ## Project structure
 
 - `index.html` — home page and deployed entry point.
