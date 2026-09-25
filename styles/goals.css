@@ -1,0 +1,116 @@
+/* Goals page: goal cards, status badges, milestones */
+
+/* ===== Goals ===== */
+.goals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.goals-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.goals-header h2 {
+    margin-bottom: 0;
+}
+
+.goal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    transition: border-color var(--transition);
+}
+
+.goal-card:hover {
+    border-color: var(--border-strong);
+}
+
+.goal-header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.goal-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.goal-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+.badge-active {
+    background: rgba(124, 92, 252, 0.15);
+    color: var(--accent-light);
+}
+
+.badge-completed {
+    background: rgba(52, 211, 153, 0.15);
+    color: var(--success);
+}
+
+.badge-paused {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--warning);
+}
+
+.goal-description {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.goal-milestones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.milestone {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.milestone-check {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-strong);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+}
+
+.milestone.done {
+    color: var(--text-muted);
+}
+
+.milestone.done .milestone-check {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+}
+
+.milestone.done .milestone-check::after {
+    content: '✓';
+}

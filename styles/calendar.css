@@ -1,0 +1,94 @@
+/* Calendar page: month grid and day cells */
+
+/* ===== Calendar ===== */
+.calendar-grid {
+    display: grid;
+    /* minmax(0,1fr) rather than 1fr: a bare 1fr track floors at the cell's
+       min-content width, so the grid refuses to shrink on narrow screens. */
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 2px;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.calendar-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    /* Announce month changes politely to screen readers */
+}
+
+.calendar-day-label {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    padding: 0.5rem;
+}
+
+/* Days are real buttons: focusable, keyboard-operable, announced properly */
+.calendar-day {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color var(--transition), color var(--transition);
+    color: var(--text-secondary);
+}
+
+.calendar-day:hover {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+}
+
+.calendar-day.selected {
+    background: var(--accent-glow);
+    color: var(--accent-light);
+    font-weight: 600;
+    box-shadow: inset 0 0 0 2px var(--accent-light);
+}
+
+.calendar-day.today {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+}
+
+.calendar-day.has-event {
+    position: relative;
+}
+
+.calendar-day.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    width: 4px;
+    height: 4px;
+    background: var(--accent-light);
+    border-radius: 50%;
+}
+
+/* On today, the dot needs to contrast against the accent fill */
+.calendar-day.today.has-event::after {
+    background: #fff;
+}
+
+.calendar-day.other-month {
+    color: var(--text-muted);
+    background: transparent;
+}
+
+.calendar-day.other-month:hover {
+    color: var(--text-primary);
+}

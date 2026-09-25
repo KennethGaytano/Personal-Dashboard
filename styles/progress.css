@@ -1,0 +1,37 @@
+/* Progress bars. Also loaded by the goals page, which shows per-goal progress. */
+
+/* ===== Progress ===== */
+.progress-item {
+    margin-bottom: 1.25rem;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.progress-label span:first-child {
+    font-weight: 500;
+}
+
+.progress-label span:last-child {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--bg-secondary);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    transition: width 0.6s ease;
+}

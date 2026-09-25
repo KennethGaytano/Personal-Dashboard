@@ -1,0 +1,197 @@
+/* Task list and task form. Also loaded by home and calendar, which both
+   render a task list via tasks.js. */
+
+/* ===== Task List ===== */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition);
+}
+
+.task-item:hover {
+    background: var(--bg-card-hover);
+}
+
+/* 24x24 meets the WCAG 2.2 target-size minimum */
+.task-item input[type="checkbox"] {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border-strong);
+    border-radius: 6px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: background-color var(--transition), border-color var(--transition);
+    position: relative;
+}
+
+.task-item input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.task-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.task-item.completed .task-text {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.task-text {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.task-priority {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+}
+
+.priority-high {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--danger-text);
+}
+
+.priority-medium {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--warning);
+}
+
+.priority-low {
+    background: rgba(52, 211, 153, 0.15);
+    color: var(--success);
+}
+
+.task-add {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.task-add input {
+    flex: 1;
+}
+
+/* ===== Enhanced Task Items ===== */
+.task-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.task-description {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0.4rem 0 0 0;
+}
+
+.task-due-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0.3rem 0 0 0;
+}
+
+.task-due-time {
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+/* ===== Overdue Warning ===== */
+.task-overdue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    align-self: flex-start;
+    margin-top: 0.4rem;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--warning);
+    background: rgba(251, 191, 36, 0.15);
+    border-radius: 999px;
+}
+
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-left: auto;
+}
+
+/* ===== Task Form ===== */
+.task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.task-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.task-form input[type="date"],
+.task-form input[type="time"] {
+    color-scheme: dark;
+}
+
+.task-form input:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.deadline-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .task-item {
+        flex-wrap: wrap;
+    }
+
+    .task-content {
+        width: 100%;
+        order: 2;
+        margin-top: 0.5rem;
+    }
+
+    .task-actions {
+        order: 3;
+        margin-top: 0.5rem;
+    }
+}

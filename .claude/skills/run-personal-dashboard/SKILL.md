@@ -155,7 +155,15 @@ Personal_DashBoard/
 │   ├── home.js          # Home page task summary
 │   └── tasks.js         # Task CRUD and localStorage persistence
 ├── styles/
-│   └── styles.css       # Shared stylesheet
+│   ├── base.css         # Reset, design tokens, a11y utilities
+│   ├── layout.css       # Sidebar, nav toggle, page scaffolding
+│   ├── components.css   # Buttons, forms, modal, toast, stat cards
+│   ├── home.css         # Pomodoro timer
+│   ├── tasks.css        # Task list and task form
+│   ├── calendar.css     # Month grid and day cells
+│   ├── notes.css        # Note cards and composer
+│   ├── progress.css     # Progress bars
+│   └── goals.css        # Goal cards, badges, milestones
 └── .claude/skills/run-personal-dashboard/
     ├── SKILL.md         # This file
     ├── server.mjs       # HTTP server for serving static files

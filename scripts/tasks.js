@@ -243,6 +243,7 @@ function renderTaskSection(containerId, tasks, emptyMessage) {
         </div>
         ${task.description ? `<p class="task-description">${escapeHtml(task.description)}</p>` : ''}
         ${formatDueDateTime(task) ? `<p class="task-due-date">${formatDueDateTime(task)}</p>` : ''}
+        ${overdueWarning(task)}
       </div>
     </div>
   `).join('');
@@ -281,6 +282,35 @@ function formatDueDateTime(task) {
 
   const formattedTime = formatTime(task.dueTime);
   return `Due: ${formatDate(task.dueDate)}${formattedTime ? ` at <span class="task-due-time">${formattedTime}</span>` : ''}`;
+}
+
+/**
+ * A task is overdue once its due moment has passed and it is still open.
+ * With no due time, the deadline is the end of the due day, so a task due
+ * today is not overdue until midnight.
+ */
+function isTaskOverdue(task) {
+  if (!task.dueDate || task.status === TaskStatus.COMPLETED) return false;
+
+  if (task.dueTime) {
+    const dueAt = new Date(`${task.dueDate}T${task.dueTime}`);
+    if (isNaN(dueAt.getTime())) return false;
+    return dueAt.getTime() < Date.now();
+  }
+
+  const endOfDueDay = new Date(`${task.dueDate}T23:59:59.999`);
+  if (isNaN(endOfDueDay.getTime())) return false;
+  return endOfDueDay.getTime() < Date.now();
+}
+
+/**
+ * Warning text shown on overdue tasks. Marked up as text rather than an
+ * icon so screen readers announce the state instead of skipping it.
+ */
+function overdueWarning(task) {
+  return isTaskOverdue(task)
+    ? `<span class="task-overdue"><span aria-hidden="true">⚠</span> Overdue</span>`
+    : '';
 }
 
 /**

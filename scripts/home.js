@@ -5,6 +5,7 @@
 
 (function() {
   const STORAGE_KEY = 'dashboard_tasks';
+  let refreshTimeoutId = null;
 
   /**
    * Get tasks from localStorage
@@ -43,6 +44,57 @@
   }
 
   /**
+   * Parse a task's date-only deadline in the visitor's local time.
+   */
+  function parseDueDate(dateString) {
+    if (!dateString) return null;
+
+    const date = new Date(`${dateString}T00:00:00`);
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  /**
+   * Get the moment a task is due. A date without a time is due at the end
+   * of that local calendar day.
+   */
+  function getTaskDueAt(task) {
+    if (!task.dueDate) return null;
+
+    const timeMatch = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(task.dueTime || '');
+    const dueTime = timeMatch ? task.dueTime : '23:59:59.999';
+    const dueAt = new Date(`${task.dueDate}T${dueTime}`);
+    return isNaN(dueAt.getTime()) ? null : dueAt;
+  }
+
+  /**
+   * Check whether a task is due today, without comparing the time of day.
+   */
+  function isTaskDueToday(task) {
+    const dueDate = parseDueDate(task.dueDate);
+    if (!dueDate) return false;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return dueDate.getTime() === today.getTime();
+  }
+
+  /**
+   * Sort tasks with deadlines first, using the earliest deadline as the
+   * tie-breaker. Tasks without a deadline remain at the end.
+   */
+  function compareTaskDeadlines(firstTask, secondTask) {
+    const firstDueAt = getTaskDueAt(firstTask);
+    const secondDueAt = getTaskDueAt(secondTask);
+
+    if (firstDueAt && secondDueAt) {
+      return firstDueAt.getTime() - secondDueAt.getTime();
+    }
+    if (firstDueAt) return -1;
+    if (secondDueAt) return 1;
+    return 0;
+  }
+
+  /**
    * Render today's tasks on the home page
    */
   function renderHomeTasks() {
@@ -57,9 +109,19 @@
     const incompleteTasks = tasks.filter(t => t.status !== 'completed');
     const completedTasks = tasks.filter(t => t.status === 'completed');
 
+    // Put overdue and due-today tasks first, then fill any remaining slots
+    // with future or undated tasks so useful work is never hidden.
+    const priorityTasks = incompleteTasks
+      .filter(task => isTaskOverdue(task) || isTaskDueToday(task))
+      .sort(compareTaskDeadlines);
+    const fallbackTasks = incompleteTasks
+      .filter(task => !isTaskOverdue(task) && !isTaskDueToday(task))
+      .sort(compareTaskDeadlines);
+
     // Show up to 3 incomplete tasks and 1 completed
     const displayTasks = [
-      ...incompleteTasks.slice(0, 3),
+      ...priorityTasks.slice(0, 3),
+      ...fallbackTasks.slice(0, Math.max(0, 3 - priorityTasks.length)),
       ...completedTasks.slice(0, 1)
     ];
 
@@ -76,8 +138,14 @@
           onchange="toggleHomeTask('${escapeHtml(task.id)}')"
           aria-label="Mark task ${escapeHtml(task.title)} as ${task.status === 'completed' ? 'incomplete' : 'complete'}"
         >
-        <span class="task-text">${escapeHtml(task.title)}</span>
-        ${task.priority ? `<span class="task-priority priority-${escapeHtml(task.priority)}">${escapeHtml(task.priority)}</span>` : ''}
+        <div class="task-content">
+          <div class="task-header">
+            <span class="task-text">${escapeHtml(task.title)}</span>
+            ${task.priority ? `<span class="task-priority priority-${escapeHtml(task.priority)}">${escapeHtml(task.priority)}</span>` : ''}
+          </div>
+          ${formatDueDateTime(task) ? `<p class="task-due-date">${formatDueDateTime(task)}</p>` : ''}
+          ${overdueWarning(task)}
+        </div>
       </div>
     `).join('');
   }
@@ -89,6 +157,71 @@
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  /**
+   * Format a date as Today, Tomorrow, or a readable date
+   */
+  function formatDate(dateString) {
+    const date = parseDueDate(dateString);
+    if (!date) return '';
+
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Reset time so only the calendar day is compared
+    today.setHours(0, 0, 0, 0);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    if (date.getTime() === today.getTime()) {
+      return 'Today';
+    } else if (date.getTime() === tomorrow.getTime()) {
+      return 'Tomorrow';
+    }
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  /**
+   * Format an HTML time value in the visitor's local time format
+   */
+  function formatTime(timeString) {
+    const match = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(timeString || '');
+    if (!match) return '';
+
+    const date = new Date();
+    date.setHours(Number(match[1]), Number(match[2]), 0, 0);
+    return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
+
+  /**
+   * A task is overdue once its due moment has passed and it is still open.
+   * With no due time, the deadline is the end of the due day.
+   */
+  function isTaskOverdue(task) {
+    if (task.status === 'completed') return false;
+
+    const dueAt = getTaskDueAt(task);
+    return dueAt ? dueAt.getTime() < Date.now() : false;
+  }
+
+  /**
+   * Deadline line for a task, or nothing when it has no due date
+   */
+  function formatDueDateTime(task) {
+    if (!task.dueDate) return '';
+
+    const formattedTime = formatTime(task.dueTime);
+    return `Due: ${formatDate(task.dueDate)}${formattedTime ? ` at <span class="task-due-time">${formattedTime}</span>` : ''}`;
+  }
+
+  /**
+   * Warning text shown on overdue tasks
+   */
+  function overdueWarning(task) {
+    return isTaskOverdue(task)
+      ? `<span class="task-overdue"><span aria-hidden="true">⚠</span> Overdue</span>`
+      : '';
   }
 
   /**
@@ -143,12 +276,42 @@
   }
 
   /**
+   * Re-render time-sensitive task state and schedule the next minute boundary.
+   */
+  function refreshTaskState() {
+    renderHomeTasks();
+    updateTaskCount();
+    scheduleTaskStateRefresh();
+  }
+
+  /**
+   * Refresh just after the next minute so newly passed due times are shown
+   * as overdue without requiring a page reload.
+   */
+  function scheduleTaskStateRefresh() {
+    if (refreshTimeoutId !== null) {
+      clearTimeout(refreshTimeoutId);
+    }
+
+    const now = new Date();
+    const delay = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds()) + 10;
+    refreshTimeoutId = setTimeout(refreshTaskState, delay);
+  }
+
+  /**
    * Initialize home page task display
    */
   function init() {
     setGreeting();
     renderHomeTasks();
     updateTaskCount();
+    scheduleTaskStateRefresh();
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        refreshTaskState();
+      }
+    });
   }
 
   // Initialize when DOM is ready

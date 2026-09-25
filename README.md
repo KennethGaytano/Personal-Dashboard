@@ -11,5 +11,5 @@ https://kennethgaytano.github.io/Personal-Dashboard/
 - `index.html` — home page and deployed entry point.
 - `pages/` — dashboard feature pages.
 - `scripts/` — browser JavaScript for task data and home-page summaries.
-- `styles/` — shared dashboard styling.
+- `styles/` — split stylesheets: `base.css` (tokens/reset), `layout.css` (sidebar and page scaffolding), `components.css` (buttons, forms, modal, toast), plus one file per page.
 - `.claude/skills/run-personal-dashboard/` — local server and Playwright checks.

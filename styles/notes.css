@@ -1,0 +1,94 @@
+/* Note cards and composer. Also loaded by the home page's Quick Notes. */
+
+/* ===== Notes ===== */
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+.note-card {
+    display: block;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+a.note-card,
+button.note-card {
+    cursor: pointer;
+}
+
+a.note-card:hover,
+button.note-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-color: var(--border-strong);
+}
+
+.note-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.note-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.note-card .note-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+}
+
+.note-color-bar {
+    height: 3px;
+    border-radius: 2px;
+    margin-bottom: 0.75rem;
+}
+
+.note-color-accent { background: var(--accent); }
+.note-color-success { background: var(--success); }
+.note-color-warning { background: var(--warning); }
+.note-color-danger { background: var(--danger); }
+.note-color-cyan { background: #06b6d4; }
+.note-color-pink { background: #f472b6; }
+
+/* Note composer */
+.note-form input,
+.note-form textarea {
+    width: 100%;
+}
+
+.note-form input {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.note-form textarea {
+    resize: vertical;
+    display: block;
+}
+
+.note-form-actions {
+    margin-top: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .notes-grid {
+        grid-template-columns: 1fr;
+    }
+}

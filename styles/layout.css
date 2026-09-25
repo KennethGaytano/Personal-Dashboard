@@ -1,0 +1,259 @@
+/* App chrome: sidebar, mobile nav, page scaffolding, section headers */
+
+/* ===== Sidebar ===== */
+aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 0;
+    z-index: 300;
+    overflow-y: auto;
+}
+
+.sidebar-logo {
+    padding: 0 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-logo h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent-light);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 0.75rem;
+    flex: 1;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.sidebar-nav a:hover {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+/* Active page is signalled by background, weight AND aria-current (set in HTML) */
+.sidebar-nav a.active {
+    background: var(--accent-glow);
+    color: var(--accent-light);
+    font-weight: 600;
+}
+
+.sidebar-nav .nav-icon {
+    font-size: 1.15rem;
+    width: 1.5rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* ===== Mobile Navigation Toggle ===== */
+.nav-toggle {
+    display: none;
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 350;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--text-primary);
+    transition: left var(--transition), background-color var(--transition);
+}
+
+.nav-toggle:hover {
+    background: var(--bg-card-hover);
+}
+
+.nav-toggle .icon-close {
+    display: none;
+}
+
+body.nav-open .nav-toggle {
+    left: calc(var(--sidebar-width) + 0.75rem);
+}
+
+body.nav-open .nav-toggle .icon-open {
+    display: none;
+}
+
+body.nav-open .nav-toggle .icon-close {
+    display: inline;
+}
+
+.nav-scrim {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 250;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    cursor: pointer;
+}
+
+/* ===== Main Content ===== */
+main {
+    /* Auto inline margins centre the column once flex-grow hits max-width */
+    margin-inline: auto;
+    flex: 1;
+    /* A flex item defaults to min-width:auto, which refuses to shrink below its
+       content and pushes the page wide. The calendar's 1fr tracks need this. */
+    min-width: 0;
+    padding: 2rem 2.5rem;
+    max-width: 1200px;
+}
+
+/* ===== Page Header ===== */
+header {
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* ===== Section ===== */
+section {
+    margin-bottom: 2rem;
+}
+
+section > h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.section-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.section-header--stacked {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.section-header h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0;
+    line-height: 1.3;
+}
+
+.section-link {
+    font-size: 0.85rem;
+    color: var(--accent-light);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: color var(--transition);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.section-link:hover {
+    color: var(--accent-light);
+    text-decoration: underline;
+}
+
+/* ===== Card (generic) ===== */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+}
+
+/* ===== Two-Column Layout ===== */
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .nav-toggle {
+        display: inline-flex;
+    }
+
+    .nav-scrim {
+        display: block;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity var(--transition), visibility var(--transition);
+    }
+
+    body.nav-open .nav-scrim {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    aside {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    body.nav-open aside {
+        transform: translateX(0);
+    }
+
+    /* Sidebar is off-canvas here, so it no longer occupies body space */
+    body {
+        padding-left: 0;
+    }
+
+    main {
+        /* Room for the fixed nav toggle */
+        padding: 4.5rem 1.25rem 1.25rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .two-col {
+        grid-template-columns: 1fr;
+    }
+}

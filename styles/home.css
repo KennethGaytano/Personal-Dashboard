@@ -1,0 +1,26 @@
+/* Home page: Pomodoro timer */
+
+/* ===== Pomodoro Timer ===== */
+.pomodoro {
+    text-align: center;
+    padding: 3.1rem 1.5rem;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pomodoro .timer-display {
+    font-size: 4rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    color: var(--accent-light);
+}
+
+.pomodoro .timer-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
