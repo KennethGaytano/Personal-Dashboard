@@ -4,7 +4,7 @@ A vibecoded website designed as a personal productivity dashboard that brings ta
 
 The website is currently in progress, with features and design elements still being developed and improved.
 
-Live Site
+## Live Site
 
 The live website is available for you to try and explore. You can check the current features, design, and functionality here:
 
