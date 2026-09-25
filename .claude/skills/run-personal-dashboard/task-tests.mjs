@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const SERVER_SCRIPT = join(__dirname, 'server.mjs');
 const PORT = 3000;
-const BASE_URL = `http://localhost:${PORT}/tasks.html`;
+const BASE_URL = `http://localhost:${PORT}/pages/tasks.html`;
 
 let testCount = 0;
 let passedCount = 0;

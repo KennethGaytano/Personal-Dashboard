@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard — Home</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
 
@@ -16,19 +16,19 @@
             <a href="index.html" class="active">
                 <span class="nav-icon">🏠</span> Home
             </a>
-            <a href="tasks.html">
+            <a href="pages/tasks.html">
                 <span class="nav-icon">✅</span> Tasks
             </a>
-            <a href="calendar.html">
+            <a href="pages/calendar.html">
                 <span class="nav-icon">📅</span> Calendar
             </a>
-            <a href="notes.html">
+            <a href="pages/notes.html">
                 <span class="nav-icon">📝</span> Notes
             </a>
-            <a href="progress.html">
+            <a href="pages/progress.html">
                 <span class="nav-icon">📈</span> Progress
             </a>
-            <a href="goals.html">
+            <a href="pages/goals.html">
                 <span class="nav-icon">🎯</span> Goals
             </a>
         </nav>
@@ -44,22 +44,22 @@
         <section>
             <h2>Overview</h2>
             <div class="stats-grid">
-                <a href="tasks.html" class="stat-card">
+                <a href="pages/tasks.html" class="stat-card">
                     <div class="stat-icon">✅</div>
                     <h3>Tasks</h3>
                     <p class="stat-value">0/5</p>
                 </a>
-                <a href="progress.html" class="stat-card">
+                <a href="pages/progress.html" class="stat-card">
                     <div class="stat-icon">⏱️</div>
                     <h3>Study Time</h3>
                     <p class="stat-value">0h 00m</p>
                 </a>
-                <a href="progress.html" class="stat-card">
+                <a href="pages/progress.html" class="stat-card">
                     <div class="stat-icon">📁</div>
                     <h3>Projects</h3>
                     <p class="stat-value">3</p>
                 </a>
-                <a href="progress.html" class="stat-card">
+                <a href="pages/progress.html" class="stat-card">
                     <div class="stat-icon">🔥</div>
                     <h3>Streak</h3>
                     <p class="stat-value">7 days</p>
@@ -71,7 +71,7 @@
             <section>
                 <div class="section-header">
                     <h2>Today's Tasks</h2>
-                    <a href="tasks.html" class="section-link">View all →</a>
+                    <a href="pages/tasks.html" class="section-link">View all →</a>
                 </div>
                 <div class="card">
                     <div class="task-list">
@@ -97,22 +97,22 @@
         <section>
             <div class="section-header">
                 <h2>Quick Notes</h2>
-                <a href="notes.html" class="section-link">View all →</a>
+                <a href="pages/notes.html" class="section-link">View all →</a>
             </div>
             <div class="notes-grid">
-                <a href="notes.html" class="note-card">
+                <a href="pages/notes.html" class="note-card">
                     <div class="note-color-bar" style="background: var(--accent);"></div>
                     <h3>Meeting Notes</h3>
                     <p>Discuss project timeline and allocate resources for Q4 deliverables.</p>
                     <div class="note-date">Today</div>
                 </a>
-                <a href="notes.html" class="note-card">
+                <a href="pages/notes.html" class="note-card">
                     <div class="note-color-bar" style="background: var(--success);"></div>
                     <h3>Book Recommendations</h3>
                     <p>Clean Code, The Pragmatic Programmer, Designing Data-Intensive Applications.</p>
                     <div class="note-date">Yesterday</div>
                 </a>
-                <a href="notes.html" class="note-card">
+                <a href="pages/notes.html" class="note-card">
                     <div class="note-color-bar" style="background: var(--warning);"></div>
                     <h3>Ideas</h3>
                     <p>Build a habit tracker, automate weekly reports, learn Rust basics.</p>
@@ -123,6 +123,6 @@
 
     </main>
 
-    <script src="home.js"></script>
+    <script src="scripts/home.js"></script>
 </body>
 </html>

@@ -88,11 +88,11 @@ async function navigate(pageName) {
 
   const pages = {
     home: 'index.html',
-    tasks: 'tasks.html',
-    calendar: 'calendar.html',
-    notes: 'notes.html',
-    progress: 'progress.html',
-    goals: 'goals.html'
+    tasks: 'pages/tasks.html',
+    calendar: 'pages/calendar.html',
+    notes: 'pages/notes.html',
+    progress: 'pages/progress.html',
+    goals: 'pages/goals.html'
   };
 
   const url = pages[pageName.toLowerCase()];

@@ -43,11 +43,11 @@ async function runSmokeTest() {
 
     const pages = [
       { name: 'Home', url: '/', file: 'home.png' },
-      { name: 'Tasks', url: '/tasks.html', file: 'tasks.png' },
-      { name: 'Calendar', url: '/calendar.html', file: 'calendar.png' },
-      { name: 'Notes', url: '/notes.html', file: 'notes.png' },
-      { name: 'Progress', url: '/progress.html', file: 'progress.png' },
-      { name: 'Goals', url: '/goals.html', file: 'goals.png' },
+      { name: 'Tasks', url: '/pages/tasks.html', file: 'tasks.png' },
+      { name: 'Calendar', url: '/pages/calendar.html', file: 'calendar.png' },
+      { name: 'Notes', url: '/pages/notes.html', file: 'notes.png' },
+      { name: 'Progress', url: '/pages/progress.html', file: 'progress.png' },
+      { name: 'Goals', url: '/pages/goals.html', file: 'goals.png' },
     ];
 
     // 3. Test Navigation & Screenshots
@@ -65,7 +65,7 @@ async function runSmokeTest() {
 
     // 4. Test Interactive Elements
     console.log('4. Testing interactive elements on Tasks page...');
-    await page.goto(`${BASE_URL}/tasks.html`);
+    await page.goto(`${BASE_URL}/pages/tasks.html`);
 
     // Type a new task
     await page.fill('#taskTitle', 'Complete skill generator');

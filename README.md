@@ -5,3 +5,11 @@ A vibecoded website designed as a personal productivity dashboard that brings ta
 The website is currently in progress, with features and design elements still being developed and improved.
 
 https://kennethgaytano.github.io/Personal-Dashboard/
+
+## Project structure
+
+- `index.html` — home page and deployed entry point.
+- `pages/` — dashboard feature pages.
+- `scripts/` — browser JavaScript for task data and home-page summaries.
+- `styles/` — shared dashboard styling.
+- `.claude/skills/run-personal-dashboard/` — local server and Playwright checks.

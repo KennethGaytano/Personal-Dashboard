@@ -144,20 +144,26 @@ PORT=8080 node server.mjs
 
 ```
 Personal_DashBoard/
-├── index.html           # Home page - dashboard overview
-├── tasks.html          # Task management
-├── calendar.html       # Calendar view
-├── notes.html          # Notes page
-├── progress.html       # Progress tracking
-├── goals.html          # Goals page
-├── styles.css          # Shared stylesheet
+├── index.html           # Home page and GitHub Pages entry point
+├── pages/               # Dashboard feature pages
+│   ├── tasks.html       # Task management
+│   ├── calendar.html    # Calendar view
+│   ├── notes.html       # Notes page
+│   ├── progress.html    # Progress tracking
+│   └── goals.html       # Goals page
+├── scripts/             # Browser JavaScript
+│   ├── home.js          # Home page task summary
+│   └── tasks.js         # Task CRUD and localStorage persistence
+├── styles/
+│   └── styles.css       # Shared stylesheet
 └── .claude/skills/run-personal-dashboard/
-    ├── SKILL.md        # This file
-    ├── server.mjs      # HTTP server for serving static files
-    ├── driver.mjs      # Interactive Playwright driver
-    ├── smoke.mjs       # Complete smoke test script
-    ├── package.json    # Node dependencies
-    └── node_modules/   # Playwright installed here
+    ├── SKILL.md         # This file
+    ├── server.mjs       # HTTP server for serving static files
+    ├── driver.mjs       # Interactive Playwright driver
+    ├── smoke.mjs        # Complete smoke test script
+    ├── task-tests.mjs   # Task management test suite
+    ├── package.json     # Node dependencies
+    └── node_modules/    # Playwright installed here
         └── playwright/
 ```
 
@@ -174,7 +180,7 @@ This is a **static HTML/CSS** app with no JavaScript state management or backend
 ### 2. Windows Path Handling
 
 The project is on Windows (`C:\Users\kenne\OneDrive\...`). The server script uses `path.join()` and handles forward slashes in URLs correctly, but if you add file operations, remember:
-- URLs always use forward slashes (`/tasks.html`)
+- URLs always use forward slashes (`/pages/tasks.html`)
 - Node.js `path` module handles OS differences automatically
 - Don't hardcode `\` or `/` in path operations
 

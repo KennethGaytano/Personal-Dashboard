@@ -55,7 +55,7 @@
     ];
 
     if (displayTasks.length === 0) {
-      container.innerHTML = '<p class="empty-state">No tasks yet. <a href="tasks.html">Create your first task</a></p>';
+      container.innerHTML = '<p class="empty-state">No tasks yet. <a href="pages/tasks.html">Create your first task</a></p>';
       return;
     }
 
