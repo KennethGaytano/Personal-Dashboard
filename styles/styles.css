@@ -306,6 +306,11 @@ section > h2 {
     margin-bottom: 1rem;
 }
 
+.section-header--stacked {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
 .section-header h2 {
     font-size: 1.15rem;
     font-weight: 600;
