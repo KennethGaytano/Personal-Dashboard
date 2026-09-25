@@ -4,7 +4,13 @@ A vibecoded website designed as a personal productivity dashboard that brings ta
 
 The website is currently in progress, with features and design elements still being developed and improved.
 
+## Live Site
+
+The live website is available for you to try and explore. You can check the current features, design, and functionality here:
+
 https://kennethgaytano.github.io/Personal-Dashboard/
+
+Current Status: The Tasks section is currently the only fully working section. Other dashboard sections are still under development and will be implemented and improved as the project progresses.
 
 ## Project structure
 
