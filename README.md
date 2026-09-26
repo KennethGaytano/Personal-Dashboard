@@ -10,7 +10,7 @@ The live website is available for you to try and explore. You can check the curr
 
 https://kennethgaytano.github.io/Personal-Dashboard/
 
-Current Status: The Tasks section is currently the only fully working section. Other dashboard sections are still under development and will be implemented and improved as the project progresses.
+Current Status: Tasks section (full CRUD, localStorage persistence, due dates/priorities), Today's Tasks display on homepage (max 3 visible including completed), and Pomodoro timer (start/pause/reset with Focus/Break modes + custom minute input) are functioning. Calendar, Notes, Progress, and Goals sections are still under development.
 
 ## Project structure
 
