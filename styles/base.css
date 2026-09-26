@@ -34,6 +34,14 @@
     --focus-ring: 0 0 0 3px var(--accent-glow);
 }
 
+/* ===== Custom scrollbar (all pages) ===== */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 999px; border: 2px solid var(--bg-card); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-light); }
+::-webkit-scrollbar-corner { background: transparent; }
+html { scrollbar-width: thin; scrollbar-color: var(--accent) transparent; }
+
 html {
     font-size: 16px;
 }
