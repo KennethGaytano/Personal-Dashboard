@@ -204,6 +204,15 @@ section > h2 {
     padding: 1.5rem;
 }
 
+.two-col > section {
+    display: flex;
+    flex-direction: column;
+}
+
+.two-col .card {
+    flex: 1;
+}
+
 /* ===== Two-Column Layout ===== */
 .two-col {
     display: grid;

@@ -105,25 +105,29 @@
       return; // Not on home page
     }
 
-    // Filter incomplete tasks (todo and in_progress)
-    const incompleteTasks = tasks.filter(t => t.status !== 'completed');
-    const completedTasks = tasks.filter(t => t.status === 'completed');
+    // Include completed tasks in ranking so finished work stays visible
+    const allTasks = tasks;
 
     // Put overdue and due-today tasks first, then fill any remaining slots
-    // with future or undated tasks so useful work is never hidden.
-    const priorityTasks = incompleteTasks
-      .filter(task => isTaskOverdue(task) || isTaskDueToday(task))
+    // with future, undated, or completed tasks.
+    const priorityTasks = tasks
+      .filter(task => (isTaskOverdue(task) || isTaskDueToday(task)) && task.status !== 'completed')
       .sort(compareTaskDeadlines);
-    const fallbackTasks = incompleteTasks
-      .filter(task => !isTaskOverdue(task) && !isTaskDueToday(task))
+    const fallbackTasks = tasks
+      .filter(task => task.status !== 'completed' && !isTaskOverdue(task) && !isTaskDueToday(task))
+      .sort(compareTaskDeadlines);
+    const completedTasks = tasks
+      .filter(task => task.status === 'completed')
       .sort(compareTaskDeadlines);
 
-    // Show up to 3 incomplete tasks and 1 completed
+    // Show at most 3 tasks in total. Completed tasks are ranked last but
+    // still earn a slot, so a finished task stays visible on the home page.
+    const MAX_TASKS = 3;
     const displayTasks = [
-      ...priorityTasks.slice(0, 3),
-      ...fallbackTasks.slice(0, Math.max(0, 3 - priorityTasks.length)),
-      ...completedTasks.slice(0, 1)
-    ];
+      ...priorityTasks,
+      ...fallbackTasks,
+      ...completedTasks
+    ].slice(0, MAX_TASKS);
 
     if (displayTasks.length === 0) {
       container.innerHTML = '<p class="empty-state">No tasks yet. <a href="pages/tasks.html">Create your first task</a></p>';
@@ -141,10 +145,10 @@
         <div class="task-content">
           <div class="task-header">
             <span class="task-text">${escapeHtml(task.title)}</span>
+            ${overdueWarning(task)}
             ${task.priority ? `<span class="task-priority priority-${escapeHtml(task.priority)}">${escapeHtml(task.priority)}</span>` : ''}
           </div>
           ${formatDueDateTime(task) ? `<p class="task-due-date">${formatDueDateTime(task)}</p>` : ''}
-          ${overdueWarning(task)}
         </div>
       </div>
     `).join('');

@@ -95,14 +95,24 @@
             </section>
 
             <section>
-                <div class="section-header">
+                <div class="section-header section-header--stacked">
                     <h2>Pomodoro</h2>
+                    <div class="mode-switch" role="group" aria-label="Timer mode">
+                        <button type="button" class="mode-btn is-active" aria-pressed="true">Focus</button>
+                        <button type="button" class="mode-btn" aria-pressed="false">Break</button>
+                    </div>
                 </div>
                 <div class="card pomodoro">
-                    <div class="timer-display">25:00</div>
-                    <div class="timer-buttons">
-                        <button class="btn btn-primary">▶ Start</button>
-                        <button class="btn btn-secondary">↺ Reset</button>
+                    <div class="timer-display" aria-live="polite" aria-atomic="true">25:00</div>
+                    <div class="timer-controls">
+                        <div class="minute-field">
+                            <label for="minuteInput" class="minute-label">Minutes</label>
+                            <input type="number" id="minuteInput" class="minute-input" min="1" max="120" value="25" />
+                        </div>
+                        <div class="timer-buttons">
+                            <button class="btn btn-primary">▶ Start</button>
+                            <button class="btn btn-secondary">↺ Reset</button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -139,5 +149,6 @@
 
     <script src="scripts/nav.js"></script>
     <script src="scripts/home.js"></script>
+    <script src="scripts/pomodoro.js"></script>
 </body>
 </html>

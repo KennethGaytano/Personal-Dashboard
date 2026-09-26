@@ -223,6 +223,7 @@ function renderTaskSection(containerId, tasks, emptyMessage) {
       <div class="task-content">
         <div class="task-header">
           <span class="task-text">${escapeHtml(task.title)}</span>
+          ${overdueWarning(task)}
           ${task.priority ? `<span class="task-priority priority-${escapeHtml(task.priority)}">${escapeHtml(task.priority)}</span>` : ''}
           <div class="task-actions">
             <button
@@ -243,7 +244,6 @@ function renderTaskSection(containerId, tasks, emptyMessage) {
         </div>
         ${task.description ? `<p class="task-description">${escapeHtml(task.description)}</p>` : ''}
         ${formatDueDateTime(task) ? `<p class="task-due-date">${formatDueDateTime(task)}</p>` : ''}
-        ${overdueWarning(task)}
       </div>
     </div>
   `).join('');
