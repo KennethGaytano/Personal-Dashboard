@@ -54,16 +54,18 @@
         </header>
 
         <section>
-            <h2>New Note</h2>
+            <h2 id="formTitle">New Note</h2>
             <div class="card">
-                <form class="note-form">
+                <form id="noteForm" class="note-form">
                     <div class="form-group">
-                        <label for="noteTitle" class="form-label">Title</label>
+                        <label for="noteTitle" class="form-label">Title <span class="required">*</span></label>
                         <input
                             type="text"
                             id="noteTitle"
                             name="title"
                             placeholder="What is this note about?"
+                            required
+                            aria-required="true"
                         >
                     </div>
                     <div class="form-group">
@@ -75,9 +77,26 @@
                             rows="4"
                         ></textarea>
                     </div>
+                    <div class="form-group">
+                        <span class="form-label" id="noteColorLabel">Color</span>
+                        <div class="color-picker" role="group" aria-labelledby="noteColorLabel">
+                            <input type="radio" name="noteColor" value="accent" id="colorAccent" class="color-radio" checked>
+                            <label for="colorAccent" class="color-swatch note-color-accent" title="Accent"></label>
+                            <input type="radio" name="noteColor" value="success" id="colorSuccess" class="color-radio">
+                            <label for="colorSuccess" class="color-swatch note-color-success" title="Success"></label>
+                            <input type="radio" name="noteColor" value="warning" id="colorWarning" class="color-radio">
+                            <label for="colorWarning" class="color-swatch note-color-warning" title="Warning"></label>
+                            <input type="radio" name="noteColor" value="danger" id="colorDanger" class="color-radio">
+                            <label for="colorDanger" class="color-swatch note-color-danger" title="Danger"></label>
+                            <input type="radio" name="noteColor" value="cyan" id="colorCyan" class="color-radio">
+                            <label for="colorCyan" class="color-swatch note-color-cyan" title="Cyan"></label>
+                            <input type="radio" name="noteColor" value="pink" id="colorPink" class="color-radio">
+                            <label for="colorPink" class="color-swatch note-color-pink" title="Pink"></label>
+                        </div>
+                    </div>
                     <div class="note-form-actions">
-                        <button type="submit" class="btn btn-primary"><span aria-hidden="true">💾</span> Save</button>
-                        <button type="reset" class="btn btn-secondary"><span aria-hidden="true">✖</span> Clear</button>
+                        <button type="submit" id="submitBtn" class="btn btn-primary"><span aria-hidden="true">💾</span> Save</button>
+                        <button type="button" id="cancelBtn" class="btn btn-secondary" style="display:none"><span aria-hidden="true">✖</span> Cancel</button>
                     </div>
                 </form>
             </div>
@@ -85,47 +104,26 @@
 
         <section>
             <h2>All Notes</h2>
-            <div class="notes-grid">
-                <article class="note-card">
-                    <div class="note-color-bar note-color-accent" aria-hidden="true"></div>
-                    <h3>Meeting Notes</h3>
-                    <p>Discuss project timeline and allocate resources for Q4 deliverables. Review the sprint backlog and identify blockers.</p>
-                    <div class="note-date">Sep 24, 2026</div>
-                </article>
-                <article class="note-card">
-                    <div class="note-color-bar note-color-success" aria-hidden="true"></div>
-                    <h3>Book Recommendations</h3>
-                    <p>Clean Code, The Pragmatic Programmer, Designing Data-Intensive Applications, Refactoring by Fowler.</p>
-                    <div class="note-date">Sep 23, 2026</div>
-                </article>
-                <article class="note-card">
-                    <div class="note-color-bar note-color-warning" aria-hidden="true"></div>
-                    <h3>Ideas Backlog</h3>
-                    <p>Build a habit tracker, automate weekly reports, learn Rust basics, contribute to open-source.</p>
-                    <div class="note-date">Sep 20, 2026</div>
-                </article>
-                <article class="note-card">
-                    <div class="note-color-bar note-color-danger" aria-hidden="true"></div>
-                    <h3>Bug Fixes</h3>
-                    <p>Login redirect loop on Safari, form validation not triggering on mobile, dark mode flicker on load.</p>
-                    <div class="note-date">Sep 18, 2026</div>
-                </article>
-                <article class="note-card">
-                    <div class="note-color-bar note-color-cyan" aria-hidden="true"></div>
-                    <h3>Study Plan</h3>
-                    <p>Week 1: Data structures review. Week 2: Graph algorithms. Week 3: Dynamic programming. Week 4: Mock interviews.</p>
-                    <div class="note-date">Sep 15, 2026</div>
-                </article>
-                <article class="note-card">
-                    <div class="note-color-bar note-color-pink" aria-hidden="true"></div>
-                    <h3>Fitness Goals</h3>
-                    <p>Run 3x/week, push-ups daily, stretch every morning. Track calories with app. Aim for 8 hours sleep.</p>
-                    <div class="note-date">Sep 12, 2026</div>
-                </article>
-            </div>
+            <div id="notesList" class="notes-grid"></div>
         </section>
 
     </main>
 
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content">
+            <h3 id="modalTitle">Delete Note</h3>
+            <p id="confirmMessage">Are you sure you want to delete this note?</p>
+            <div class="modal-actions">
+                <button type="button" id="cancelModal" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="confirmDelete" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
     <script src="../scripts/nav.js"></script>
+    <script src="../scripts/notes.js"></script>
 </html>

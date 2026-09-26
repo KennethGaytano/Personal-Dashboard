@@ -86,6 +86,62 @@ button.note-card:hover {
     gap: 0.5rem;
 }
 
+.color-picker {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.color-radio {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.color-swatch {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+}
+.color-radio:focus + .color-swatch,
+.color-swatch:hover {
+    border-color: var(--bg-card);
+    transform: scale(1.15);
+}
+.color-radio:checked + .color-swatch {
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 2px var(--bg-card), 0 0 0 3px var(--accent-light);
+}
+
+.quick-note-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.quick-note-form input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+.quick-note-composer {
+    margin-bottom: 1rem;
+}
+
+.note-actions {
+    display: flex;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+    justify-content: flex-end;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
     .notes-grid {

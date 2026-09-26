@@ -123,26 +123,21 @@
                 <h2>Quick Notes</h2>
                 <a href="pages/notes.html" class="section-link">View all →</a>
             </div>
-            <div class="notes-grid">
-                <a href="pages/notes.html" class="note-card">
-                    <div class="note-color-bar note-color-accent" aria-hidden="true"></div>
-                    <h3>Meeting Notes</h3>
-                    <p>Discuss project timeline and allocate resources for Q4 deliverables.</p>
-                    <div class="note-date">Today</div>
-                </a>
-                <a href="pages/notes.html" class="note-card">
-                    <div class="note-color-bar note-color-success" aria-hidden="true"></div>
-                    <h3>Book Recommendations</h3>
-                    <p>Clean Code, The Pragmatic Programmer, Designing Data-Intensive Applications.</p>
-                    <div class="note-date">Yesterday</div>
-                </a>
-                <a href="pages/notes.html" class="note-card">
-                    <div class="note-color-bar note-color-warning" aria-hidden="true"></div>
-                    <h3>Ideas</h3>
-                    <p>Build a habit tracker, automate weekly reports, learn Rust basics.</p>
-                    <div class="note-date">Sep 20</div>
-                </a>
+            <div class="card quick-note-composer">
+                <form id="quickNoteForm" class="quick-note-form">
+                    <label for="quickNoteTitle" class="visually-hidden">Quick note title</label>
+                    <input
+                        type="text"
+                        id="quickNoteTitle"
+                        name="title"
+                        placeholder="Quick thought…"
+                        required
+                        aria-required="true"
+                    >
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
             </div>
+            <div id="quickNotesList" class="notes-grid"></div>
         </section>
 
     </main>
@@ -150,5 +145,7 @@
     <script src="scripts/nav.js"></script>
     <script src="scripts/home.js"></script>
     <script src="scripts/pomodoro.js"></script>
+    <script src="scripts/quick-notes.js"></script>
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
 </body>
 </html>
