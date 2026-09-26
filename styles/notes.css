@@ -142,10 +142,18 @@ button.note-card:hover {
     justify-content: flex-end;
 }
 
+/* ===== Empty State ===== */
+/* The empty state is a grid item. Without spanning every column,
+   text-align: center only centers it inside the first column. */
+.notes-grid > .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 1rem;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
     .notes-grid {
         grid-template-columns: 1fr;
     }
 }
-.empty-state { text-align: center; padding: 1rem; }
