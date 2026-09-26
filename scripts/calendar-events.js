@@ -4,6 +4,8 @@
  */
 const STORAGE_KEY = 'dashboard_events';
 
+let editingEventId = null;
+
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
@@ -54,7 +56,10 @@ function renderEventList(dateKey) {
         <div style="font-weight:600;color:var(--text-primary);">${escapeHtml(ev.title)}</div>
         <div style="font-size:0.8rem;color:var(--text-secondary);">${escapeHtml(ev.time || '')} ${ev.description ? '— ' + escapeHtml(ev.description) : ''}</div>
       </div>
-      <button type="button" class="btn-icon danger" onclick="deleteEvent('${escapeHtml(ev.id)}','${escapeHtml(dateKey)}')" aria-label="Delete event ${escapeHtml(ev.title)}" style="margin-left:0.5rem;">🗑️</button>
+      <div style="display:flex;gap:0.35rem;align-items:center;">
+        <button type="button" class="btn-icon" onclick="startEditEvent('${escapeHtml(ev.id)}')" aria-label="Edit event ${escapeHtml(ev.title)}">✏️</button>
+        <button type="button" class="btn-icon danger" onclick="deleteEvent('${escapeHtml(ev.id)}','${escapeHtml(dateKey)}')" aria-label="Delete event ${escapeHtml(ev.title)}">🗑️</button>
+      </div>
     </div>
   `).join('');
 }
@@ -80,6 +85,24 @@ window.deleteEvent = function(id, dateKey) {
     else btn.classList.remove('has-event');
   }
 };
+
+function startEditEvent(eventId) {
+  const events = getEvents();
+  const ev = events.find(e => e.id === eventId);
+  if (!ev) return;
+  editingEventId = eventId;
+  const titleInput = document.getElementById('eventTitle');
+  const timeInput = document.getElementById('eventTime');
+  const descInput = document.getElementById('eventDesc');
+  if (titleInput) titleInput.value = ev.title || '';
+  if (timeInput) timeInput.value = ev.time || '';
+  if (descInput) descInput.value = ev.description || '';
+  const submitBtn = document.querySelector('#eventForm button[type="submit"]');
+  if (submitBtn) submitBtn.textContent = 'Update';
+  document.getElementById('eventForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+window.startEditEvent = startEditEvent;
 
 function addEvent(dateKey) {
   const titleInput = document.getElementById('eventTitle');
@@ -189,11 +212,48 @@ function initEvents() {
   document.getElementById('eventForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const btn = document.querySelector('#calendarGrid button.selected');
-    if (!btn) return;
-    const key = btn.getAttribute('data-date');
-    if (!key) return;
-    addEvent(key);
-    document.getElementById('selectedDateLabel').textContent = formatEventDate(key);
+    const key = btn ? btn.getAttribute('data-date') : null;
+    const titleInput = document.getElementById('eventTitle');
+    const timeInput = document.getElementById('eventTime');
+    const descInput = document.getElementById('eventDesc');
+    const title = titleInput ? titleInput.value.trim() : '';
+    if (!title) return;
+    if (editingEventId) {
+      const events = getEvents();
+      const idx = events.findIndex(ev => ev.id === editingEventId);
+      if (idx >= 0) {
+        events[idx].title = title;
+        events[idx].time = timeInput ? timeInput.value : '';
+        events[idx].description = descInput ? descInput.value.trim() : '';
+        events[idx].date = key || events[idx].date;
+        saveEvents(events);
+        editingEventId = null;
+        const submitBtn = document.querySelector('#eventForm button[type="submit"]');
+        if (submitBtn) submitBtn.textContent = 'Add';
+      }
+    } else {
+      if (!key) return;
+      const currentEvents = getEvents();
+      currentEvents.push({
+        id: generateId(),
+        title: title,
+        date: key,
+        time: timeInput ? timeInput.value : '',
+        description: descInput ? descInput.value.trim() : '',
+        createdAt: new Date().toISOString()
+      });
+      saveEvents(currentEvents);
+    }
+    if (titleInput) titleInput.value = '';
+    if (timeInput) timeInput.value = '';
+    if (descInput) descInput.value = '';
+    if (key) {
+      renderEventList(key);
+      document.getElementById('selectedDateLabel').textContent = formatEventDate(key);
+    }
+    renderUpcomingEvents();
+    const btnSelected = document.querySelector('#calendarGrid button.selected[data-date]');
+    if (btnSelected) btnSelected.classList.add('has-event');
   });
 
   // Hook into calendar day selection to show events
