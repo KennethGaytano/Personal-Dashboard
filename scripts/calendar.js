@@ -11,15 +11,9 @@
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  // Sample event days, keyed as "YYYY-MM-DD"
-  const EVENTS = new Set([
-    '2026-09-07',
-    '2026-09-10',
-    '2026-09-15',
-    '2026-09-28',
-    '2026-10-01',
-    '2026-10-05'
-  ]);
+  // Days that have at least one event, keyed as "YYYY-MM-DD".
+  // calendar-events.js overrides this with the days stored in localStorage.
+  const EVENTS = new Set();
 
   // Visible month; defaults to the month containing today
   let viewYear;
@@ -58,7 +52,7 @@
         dayNumber: date.getDate(),
         isCurrentMonth: date.getMonth() === month,
         isToday: isSameDay(date, today),
-        hasEvent: EVENTS.has(toKey(date.getFullYear(), date.getMonth(), date.getDate()))
+        hasEvent: (typeof window.getCalendarEventDates === 'function' ? window.getCalendarEventDates() : EVENTS).has(toKey(date.getFullYear(), date.getMonth(), date.getDate()))
       });
     }
 

@@ -10,7 +10,7 @@ The live website is available for you to try and explore. You can check the curr
 
 https://kennethgaytano.github.io/Personal-Dashboard/
 
-Current Status: Tasks (full CRUD, localStorage, due dates/priorities), Today's Tasks display (max 3 including completed), Pomodoro timer (start/pause/reset with Focus/Break modes + custom minute input), Notes and Quick Notes (full CRUD, color picker, edit/delete, shared store, toasts) are functioning. Calendar, Progress, and Goals sections are still under development.
+Current Status: Tasks (full CRUD, localStorage, due dates/priorities), Today's Tasks display (max 3 including completed), Pomodoro timer (start/pause/reset with Focus/Break modes + custom minute input), Notes and Quick Notes (full CRUD, color picker, edit/delete, shared store, toasts), Calendar events (CRUD, localStorage `dashboard_events`, dot markers, selected-day panel) are functioning. Progress and Goals sections are still under development.
 
 ## Project structure
 
