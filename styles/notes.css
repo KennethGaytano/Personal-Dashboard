@@ -148,3 +148,4 @@ button.note-card:hover {
         grid-template-columns: 1fr;
     }
 }
+.empty-state { text-align: center; padding: 1rem; }

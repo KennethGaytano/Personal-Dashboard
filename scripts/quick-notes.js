@@ -92,7 +92,7 @@
       .slice(0, 3);
 
     if (notes.length === 0) {
-      container.innerHTML = '<p class="empty-state">No notes yet. <a href="pages/notes.html">Create your first note</a></p>';
+      container.innerHTML = '<p class="empty-state" style="text-align:center;padding:1rem;">No notes yet. <a href="pages/notes.html">Create your first note</a></p>';
       return;
     }
 
