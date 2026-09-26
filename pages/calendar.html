@@ -57,16 +57,16 @@
         <section>
             <div class="card">
                 <div class="calendar-header">
-                    <button type="button" class="btn btn-secondary btn-sm" id="prevMonth">
+                    <button type="button" class="btn btn-secondary btn-sm" id="prevMonth" aria-label="Previous month">
                         <span aria-hidden="true">←</span> Prev
                     </button>
-                    <h3 id="monthLabel" aria-live="polite">September 2026</h3>
-                    <button type="button" class="btn btn-secondary btn-sm" id="nextMonth">
+                    <h2 id="monthLabel" aria-live="polite">September 2026</h2>
+                    <button type="button" class="btn btn-secondary btn-sm" id="nextMonth" aria-label="Next month">
                         Next <span aria-hidden="true">→</span>
                     </button>
                 </div>
 
-                <div class="calendar-grid" id="calendarGrid" role="grid" aria-labelledby="monthLabel">
+                <div class="calendar-grid" id="calendarGrid" role="group" aria-labelledby="monthLabel">
                     <div class="calendar-day-label" aria-hidden="true">Sun</div>
                     <div class="calendar-day-label" aria-hidden="true">Mon</div>
                     <div class="calendar-day-label" aria-hidden="true">Tue</div>
@@ -79,15 +79,49 @@
             </div>
         </section>
 
+        <section id="eventPanel">
+            <h2>Events for <span id="selectedDateLabel">today</span></h2>
+            <div class="card">
+                <form id="eventForm" class="event-form" aria-label="Add or edit event">
+                    <p id="editBanner" class="edit-banner" role="status" aria-live="polite" hidden></p>
+                    <div class="form-row" style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:flex-end;">
+                        <div class="form-group" style="flex:1;min-width:140px;">
+                            <label for="eventTitle" class="form-label">Title <span aria-label="required" aria-hidden="true">*</span></label>
+                            <input type="text" id="eventTitle" placeholder="Meeting, deadline..." required aria-required="true" autocomplete="off" />
+                        </div>
+                        <div class="form-group" style="min-width:120px;">
+                            <label for="eventDate" class="form-label">Date</label>
+                            <input type="date" id="eventDate" required aria-required="true" />
+                        </div>
+                        <div class="form-group" style="min-width:100px;">
+                            <label for="eventTime" class="form-label">Time</label>
+                            <input type="time" id="eventTime" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="white-space:nowrap;">Add event</button>
+                        <button type="button" id="cancelEventBtn" class="btn btn-secondary" hidden>Cancel</button>
+                    </div>
+                    <div class="form-group" style="margin-top:0.5rem;">
+                        <label for="eventDesc" class="form-label">Notes</label>
+                        <input type="text" id="eventDesc" placeholder="Details..." />
+                    </div>
+                </form>
+            </div>
+            <div class="card" style="margin-top:1rem;">
+                <div id="eventList" role="list" aria-label="Events on selected day"></div>
+            </div>
+        </section>
+
         <section>
             <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
                 <h2>Upcoming Events</h2>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="clearPastEvents()">Clear finished</button>
+                <button type="button" id="clearPastBtn" class="btn btn-secondary btn-sm">Delete past events</button>
             </div>
             <div class="card">
-                <div id="upcomingEventsList" class="task-list"></div>
+                <div id="upcomingEventsList" role="list" aria-label="Upcoming events"></div>
             </div>
         </section>
+
+        <div id="calendarToast" class="toast" role="status" aria-live="polite"></div>
 
     </main>
 
@@ -96,5 +130,4 @@
     <script src="../scripts/calendar-events.js"></script>
 
 </body>
-
 </html>

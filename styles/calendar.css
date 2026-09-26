@@ -53,8 +53,8 @@
 }
 
 .calendar-day.selected {
-    background: var(--accent-glow);
-    color: var(--accent-light);
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
     font-weight: 600;
     box-shadow: inset 0 0 0 2px var(--accent-light);
 }
@@ -72,14 +72,13 @@
 .calendar-day.has-event::after {
     content: '';
     position: absolute;
-    bottom: 4px;
-    width: 4px;
-    height: 4px;
+    bottom: 5px;
+    width: 5px;
+    height: 5px;
     background: var(--accent-light);
     border-radius: 50%;
 }
 
-/* On today, the dot needs to contrast against the accent fill */
 .calendar-day.today.has-event::after {
     background: #fff;
 }
@@ -91,4 +90,29 @@
 
 .calendar-day.other-month:hover {
     color: var(--text-primary);
+}
+
+/* ===== Event list / form ===== */
+.event-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.75rem; border-bottom: 1px solid var(--border);
+    gap: 0.5rem; flex-wrap: wrap;
+}
+.event-item-text { flex: 1 1 10rem; min-width: 0; }
+.event-item-title { font-weight: 600; color: var(--text-primary); }
+.event-item-meta { font-size: 0.8rem; color: var(--text-secondary); }
+.event-item-actions { display: flex; gap: 0.35rem; flex-shrink: 0; }
+.event-item-actions .btn-icon { flex: 0 0 44px; min-width: 44px; min-height: 44px; }
+.event-form .btn-icon + .btn-icon,
+.event-item-actions .btn-icon + .btn-icon { margin-left: 0.35rem; }
+.event-group-heading {
+    font-size: 0.9rem; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0.75rem 0.75rem 0.25rem; margin-top: 0.25rem;
+}
+.edit-banner { background: var(--accent-glow); color: var(--text-primary);
+    padding: 0.5rem; border-radius: var(--radius-sm); font-size: 0.9rem; }
+@media (min-width: 640px) {
+    .form-row { display: grid; grid-template-columns: minmax(0,2fr) 1fr 1fr auto auto; gap: 0.75rem; align-items: end; }
+    .form-row input[type="date"], .form-row input[type="time"] { width: 100%; }
 }
