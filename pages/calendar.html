@@ -80,24 +80,12 @@
         </section>
 
         <section>
-            <h2>Upcoming Events</h2>
-            <div class="task-list">
-                <div class="task-item">
-                    <span class="nav-icon" aria-hidden="true">📌</span>
-                    <span class="task-text"><strong>Sep 25</strong> — Team stand-up meeting</span>
-                </div>
-                <div class="task-item">
-                    <span class="nav-icon" aria-hidden="true">📌</span>
-                    <span class="task-text"><strong>Sep 28</strong> — Project deadline: API integration</span>
-                </div>
-                <div class="task-item">
-                    <span class="nav-icon" aria-hidden="true">📌</span>
-                    <span class="task-text"><strong>Oct 1</strong> — Monthly review</span>
-                </div>
-                <div class="task-item">
-                    <span class="nav-icon" aria-hidden="true">📌</span>
-                    <span class="task-text"><strong>Oct 5</strong> — Study group session</span>
-                </div>
+            <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                <h2>Upcoming Events</h2>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="clearPastEvents()">Clear finished</button>
+            </div>
+            <div class="card">
+                <div id="upcomingEventsList" class="task-list"></div>
             </div>
         </section>
 

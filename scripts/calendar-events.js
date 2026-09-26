@@ -70,6 +70,8 @@ window.deleteEvent = function(id, dateKey) {
   const events = getEvents().filter(e => e.id !== id);
   saveEvents(events);
   renderEventList(dateKey);
+  // Refresh Upcoming list too
+  renderUpcomingEvents();
   // Dot only; the list below the grid carries the detail.
   const btn = document.querySelector('#calendarGrid button.calendar-day[data-date="' + dateKey + '"]');
   if (btn) {
@@ -98,10 +100,53 @@ function addEvent(dateKey) {
   if (timeInput) timeInput.value = '';
   if (descInput) descInput.value = '';
   renderEventList(dateKey);
+  renderUpcomingEvents();
   // Update dot on selected button (calendar-day, not .selected only)
   const btn = document.querySelector('#calendarGrid button.calendar-day[data-date="' + dateKey + '"]');
   if (btn) btn.classList.add('has-event');
 }
+
+function renderUpcomingEvents() {
+  const container = document.getElementById('upcomingEventsList');
+  if (!container) return;
+  const now = new Date(); now.setHours(0,0,0,0);
+  const events = getEvents()
+    .filter(e => e.date && e.date >= now.toISOString().split('T')[0])
+    .sort((a,b) => (a.date + ' ' + (a.time||'')).localeCompare(b.date + ' ' + (b.time||'')));
+  if (events.length === 0) {
+    container.innerHTML = '<p class="empty-state" style="padding:0.5rem;color:var(--text-muted);font-size:0.85rem;">No upcoming events.</p>';
+    return;
+  }
+  container.innerHTML = events.map(ev => `
+    <div class="task-item" style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <span class="nav-icon" aria-hidden="true">📌</span>
+        <span class="task-text"><strong>${escapeHtml(ev.date)}</strong> — ${escapeHtml(ev.title)} ${ev.time ? ' @ ' + escapeHtml(ev.time) : ''}</span>
+      </div>
+      <button type="button" class="btn-icon danger" onclick="deleteEvent('${escapeHtml(ev.id)}','${escapeHtml(ev.date)}')" aria-label="Remove event ${escapeHtml(ev.title)}" style="margin-left:0.5rem;">🗑️</button>
+    </div>
+  `).join('');
+}
+
+function clearPastEvents() {
+  const now = new Date(); now.setHours(0,0,0,0);
+  const todayKey = now.toISOString().split('T')[0];
+  const filtered = getEvents().filter(e => !e.date || e.date >= todayKey);
+  saveEvents(filtered);
+  renderUpcomingEvents();
+  // Update dots
+  const grid = document.getElementById('calendarGrid');
+  if (grid) {
+    grid.querySelectorAll('.calendar-day').forEach(btn => {
+      const k = btn.getAttribute('data-date');
+      if (!k) return;
+      if (filtered.some(e => e.date === k)) btn.classList.add('has-event');
+      else btn.classList.remove('has-event');
+    });
+  }
+}
+
+window.clearPastEvents = clearPastEvents;
 
 function initEvents() {
   // Add form + list to calendar page if not present
@@ -163,6 +208,9 @@ function initEvents() {
       renderEventList(key);
     });
   }
+
+  // Populate upcoming events from storage on load
+  renderUpcomingEvents();
 }
 
 if (document.readyState === 'loading') {
